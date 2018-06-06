@@ -1,0 +1,5 @@
+<h2>Edit Blog</h2>
+
+<%= render "form.html", Map.put(assigns, :action, blog_path(@conn, :update, @blog)) %>
+
+<span><%= link "Back", to: blog_path(@conn, :index) %></span>
