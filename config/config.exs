@@ -30,5 +30,5 @@ config :ueberauth, Ueberauth,
   ]
 
 config :ueberauth, Ueberauth.Strategy.Facebook.OAuth,
-  client_id: "360560764434228",
-  client_secret: "86c29ff1049390cbf2e0850bd90a2072"
+  client_id: "1921038801247765",
+  client_secret: "0b45c319eddc4279a92b0b5b0eb2b597"
