@@ -2,9 +2,8 @@ defmodule Travenger.Groups.Group do
   use Ecto.Schema
   import Ecto.Changeset
 
-
   schema "groups" do
-    field :name, :string
+    field(:name, :string)
 
     timestamps()
   end

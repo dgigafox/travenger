@@ -13,9 +13,11 @@ defmodule Travenger.Accounts do
   """
   def auth_or_register_users(%{email: email} = attrs) do
     case get_user_by_email(email) do
-      nil -> create_user(attrs)
-      user -> {:ok, user}
+      nil -> %User{}
+      user -> user
     end
+    |> User.changeset(attrs)
+    |> Repo.insert_or_update()
   end
 
   @doc """

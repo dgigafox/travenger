@@ -12,6 +12,7 @@ defmodule TravengerWeb.AuthController do
         params
         |> Map.put(:token, auth.credentials.token)
         |> Map.put(:email, auth.info.email)
+        |> Map.put(:image_url, auth.info.image)
 
       authenticate_or_register(conn, params)
     end
