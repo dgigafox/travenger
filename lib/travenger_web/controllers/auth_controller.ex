@@ -7,13 +7,18 @@ defmodule TravengerWeb.AuthController do
   plug(Ueberauth)
 
   def callback(%{assigns: %{ueberauth_auth: auth}} = conn, params) do
-    with params <- string_keys_to_atom(params) do
+    with params <- string_keys_to_atom(params),
+         user_info <- string_keys_to_atom(auth.extra.raw_info.user) do
       params =
         params
         |> Map.put(:token, auth.credentials.token)
         |> Map.put(:email, auth.info.email)
         |> Map.put(:image_url, auth.info.image)
+        |> Map.put(:first_name, auth.info.first_name)
+        |> Map.put(:last_name, auth.info.last_name)
+        |> Map.put(:gender, user_info.gender)
 
+      IO.inspect(params)
       authenticate_or_register(conn, params)
     end
   end
