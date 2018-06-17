@@ -13,7 +13,11 @@ defmodule Travenger.Accounts.User do
     field(:email, :string)
     field(:provider, :string)
     field(:token, :string)
+    # user info
     field(:image_url, :string)
+    field(:first_name, :string)
+    field(:last_name, :string)
+    field(:gender, :string)
 
     has_many(:groups, Group)
     has_many(:events, Event)
@@ -22,7 +26,7 @@ defmodule Travenger.Accounts.User do
     timestamps()
   end
 
-  @user_attrs ~w(email token provider image_url)a
+  @user_attrs ~w(email token provider image_url first_name last_name gender)a
 
   @doc false
   def changeset(user, attrs) do

@@ -26,7 +26,12 @@ import_config "#{Mix.env()}.exs"
 
 config :ueberauth, Ueberauth,
   providers: [
-    facebook: {Ueberauth.Strategy.Facebook, []}
+    facebook:
+      {Ueberauth.Strategy.Facebook,
+       [
+         profile_fields: "id,email,first_name,last_name,gender,location",
+         default_scope: "email,public_profile"
+       ]}
   ]
 
 config :ueberauth, Ueberauth.Strategy.Facebook.OAuth,
