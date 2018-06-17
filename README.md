@@ -1,7 +1,8 @@
 # Travenger
 
-This is the repository of Travenger API. Travenger is a group travel website for travelers. The purpose of the site is currently confidential. If you know elixir even just the basics of it and want to contribute in this simple project please feel free to contact me in my email: darrengegantino@gmail.com or message me on facebook: https://www.facebook.com/darren.gegantino
+This is the repository of Travenger API. Travenger is a group travel website for travelers. The purpose of the site is currently confidential. If you know elixir even just the basics of it and want to contribute in this simple project please feel free to contact me in my email: darrengegantino@gmail.com or message me on facebook: https://www.facebook.com/darren.gegantino. Happy coding!
 
+## How To
 To start your Phoenix server:
 
   * Install dependencies with `mix deps.get`
@@ -13,7 +14,7 @@ Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
 
 Ready to run in production? Please [check our deployment guides](http://www.phoenixframework.org/docs/deployment).
 
-## Learn more
+### Learn more
 
   * Official website: http://www.phoenixframework.org/
   * Guides: http://phoenixframework.org/docs/overview
