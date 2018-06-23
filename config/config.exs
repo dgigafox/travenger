@@ -34,7 +34,7 @@ config :ueberauth, Ueberauth,
     facebook:
       {Ueberauth.Strategy.Facebook,
        [
-         profile_fields: "id,email,first_name,last_name,gender,location",
+         profile_fields: "id,email,name,first_name,last_name,gender,location",
          default_scope: "email,public_profile"
        ]}
   ]

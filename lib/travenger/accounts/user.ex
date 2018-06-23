@@ -7,6 +7,7 @@ defmodule Travenger.Accounts.User do
 
   alias Travenger.Accounts.UserGroup
   alias Travenger.Groups.Group
+
   alias Travenger.Posts.{
     Blog,
     Event
@@ -17,6 +18,7 @@ defmodule Travenger.Accounts.User do
     field(:provider, :string)
     field(:token, :string)
     # user info
+    field(:name, :string)
     field(:image_url, :string)
     field(:first_name, :string)
     field(:last_name, :string)
@@ -29,7 +31,8 @@ defmodule Travenger.Accounts.User do
     timestamps()
   end
 
-  @user_attrs ~w(email provider token image_url first_name last_name gender)a
+  @user_attrs ~w(email provider token name image_url first_name last_name
+                gender)a
 
   @doc false
   def changeset(user, attrs \\ %{}) do

@@ -11,6 +11,7 @@ defmodule Travenger.Factory do
 
     %User{
       email: email,
+      name: "Darren Gegantino",
       image_url: "http://graph.facebook.com/10216277902323229/picture?type=square",
       first_name: "Darren",
       last_name: "Gegantino",
