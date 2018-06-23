@@ -14,6 +14,7 @@ defmodule TravengerWeb.AuthController do
         |> Map.put(:token, auth.credentials.token)
         |> Map.put(:email, auth.info.email)
         |> Map.put(:image_url, auth.info.image)
+        |> Map.put(:name, auth.info.name)
         |> Map.put(:first_name, auth.info.first_name)
         |> Map.put(:last_name, auth.info.last_name)
         |> Map.put(:gender, user_info.gender)
@@ -23,7 +24,7 @@ defmodule TravengerWeb.AuthController do
   end
 
   def authenticate_or_register(conn, params) do
-    with {:ok, user} <- Accounts.auth_or_register_users(params) do
+    with {:ok, user} <- Accounts.auth_or_register_user(params) do
       conn
       |> put_view(TravengerWeb.UserView)
       |> render("show.json", user: user)
