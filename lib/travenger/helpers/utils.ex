@@ -1,4 +1,8 @@
 defmodule Travenger.Helpers.Utils do
+  @moduledoc """
+  Helper Util Functions
+  """
+
   @doc """
   Converts string to atom
   """

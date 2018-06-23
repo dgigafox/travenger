@@ -18,7 +18,6 @@ defmodule TravengerWeb.AuthController do
         |> Map.put(:last_name, auth.info.last_name)
         |> Map.put(:gender, user_info.gender)
 
-      IO.inspect(params)
       authenticate_or_register(conn, params)
     end
   end
