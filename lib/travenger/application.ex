@@ -1,4 +1,5 @@
 defmodule Travenger.Application do
+  @moduledoc false
   use Application
 
   # See https://hexdocs.pm/elixir/Application.html
@@ -11,8 +12,9 @@ defmodule Travenger.Application do
       # Start the Ecto repository
       supervisor(Travenger.Repo, []),
       # Start the endpoint when the application starts
-      supervisor(TravengerWeb.Endpoint, []),
-      # Start your own worker by calling: Travenger.Worker.start_link(arg1, arg2, arg3)
+      supervisor(TravengerWeb.Endpoint, [])
+      # Start your own worker by calling:
+      # Travenger.Worker.start_link(arg1, arg2, arg3)
       # worker(Travenger.Worker, [arg1, arg2, arg3]),
     ]
 

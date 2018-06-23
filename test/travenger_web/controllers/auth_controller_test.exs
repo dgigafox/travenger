@@ -1,4 +1,4 @@
-defmodule TravengerWeb.BlogControllerTest do
+defmodule TravengerWeb.AuthControllerTest do
   use TravengerWeb.ConnCase
 
   test "Sign in with Facebook", %{conn: conn} do

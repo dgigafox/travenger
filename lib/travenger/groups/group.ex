@@ -1,7 +1,15 @@
 defmodule Travenger.Groups.Group do
+  @moduledoc """
+  Group schema
+  """
   use Ecto.Schema
 
   import Ecto.Changeset
+
+  alias Travenger.Accounts.{
+    User,
+    UserGroup
+  }
 
   alias Travenger.Posts.Event
 
@@ -9,6 +17,7 @@ defmodule Travenger.Groups.Group do
     field(:name, :string)
     field(:image_url, :string)
 
+    many_to_many(:users, User, join_through: UserGroup)
     has_many(:events, Event)
     timestamps()
   end

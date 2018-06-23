@@ -41,7 +41,11 @@ defmodule Travenger.Mixfile do
       {:phoenix_live_reload, "~> 1.0", only: :dev},
       {:gettext, "~> 0.11"},
       {:cowboy, "~> 1.0"},
-      {:ueberauth_facebook, "~> 0.7"}
+      {:ueberauth_facebook, "~> 0.7"},
+      {:excoveralls, "~> 0.8", only: :test},
+      {:ex_machina, "~> 2.1"},
+      {:mock, "~> 0.3.1", only: :test},
+      {:credo, "~> 0.9.0-rc1", only: [:dev, :test], runtime: false}
     ]
   end
 
