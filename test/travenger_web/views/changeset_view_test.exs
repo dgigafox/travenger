@@ -1,8 +1,8 @@
 defmodule TravengerWeb.ChangesetViewTest do
   use ExUnit.Case, async: true
 
-  alias TravengerWeb.ChangesetView
   alias Ecto.Changeset
+  alias TravengerWeb.ChangesetView
 
   @error "is required"
   @changeset %Changeset{

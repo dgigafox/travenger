@@ -27,7 +27,7 @@ defmodule Travenger.AccountsTest do
 
     test "find user by id", %{user: user} do
       found_user = Accounts.find_user(%{id: user.id})
-      
+
       assert found_user.id == user.id
     end
 
@@ -51,6 +51,15 @@ defmodule Travenger.AccountsTest do
       found_user = Accounts.find_user(%{id: 10_000})
 
       assert found_user == nil
+    end
+  end
+
+  describe "get_user/1" do
+    test "get user by id" do
+      user = insert(:user)
+      found_user = Accounts.get_user(user.id)
+
+      assert found_user.id == user.id
     end
   end
 end
