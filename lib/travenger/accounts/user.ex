@@ -22,7 +22,7 @@ defmodule Travenger.Accounts.User do
     field(:image_url, :string)
     field(:first_name, :string)
     field(:last_name, :string)
-    field(:gender, :string)
+    field(:gender, GenderTypeEnum)
 
     many_to_many(:groups, Group, join_through: UserGroup)
     has_many(:events, Event)

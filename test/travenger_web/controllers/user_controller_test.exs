@@ -28,7 +28,7 @@ defmodule TravengerWeb.UserControllerTest do
     end
 
     test "returns a paginated list of users given gender", %{conn: conn} do
-      params = %{gender: "male"}
+      params = %{gender: :male}
       conn = get(conn, user_path(conn, :index), params)
       %{"data" => data} = json_response(conn, :ok)
 
