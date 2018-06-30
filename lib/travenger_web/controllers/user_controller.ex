@@ -8,6 +8,11 @@ defmodule TravengerWeb.UserController do
 
   action_fallback TravengerWeb.FallbackController
 
+  def index(conn, params) do
+    users = Accounts.list_users(params)
+    render(conn, "index.json", users: users)
+  end
+
   def show(conn, params) do
     with params <- string_keys_to_atom(params),
          %User{} = user <- Accounts.find_user(params) do
