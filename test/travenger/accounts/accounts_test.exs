@@ -62,4 +62,25 @@ defmodule Travenger.AccountsTest do
       assert found_user.id == user.id
     end
   end
+
+  describe "list_users/1" do
+    test "list users with pagination" do
+      insert(:user)
+      insert(:user)
+      %{entries: list, total_entries: total} = Accounts.list_users()
+
+      refute list == []
+      assert total == 2
+    end
+
+    test "filter by gender" do
+      insert(:user, gender: "male")
+      insert(:user, gender: "female")
+      %{entries: list, total_entries: total} =
+        Accounts.list_users(%{gender: "male"})
+
+      refute list == []
+      assert total == 1
+    end
+  end
 end

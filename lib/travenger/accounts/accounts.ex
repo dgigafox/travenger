@@ -30,8 +30,10 @@ defmodule Travenger.Accounts do
       [%User{}, ...]
 
   """
-  def list_users do
-    Repo.all(User)
+  def list_users(attrs \\ %{}) do
+    User
+    |> where_gender(attrs)
+    |> Repo.paginate(attrs)
   end
 
   @doc """

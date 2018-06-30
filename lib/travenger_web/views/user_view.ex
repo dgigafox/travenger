@@ -2,9 +2,15 @@ defmodule TravengerWeb.UserView do
   use TravengerWeb, :view
 
   alias __MODULE__
+  alias Scrivener.Page
 
   def render("show.json", %{user: user}) do
     %{data: render_one(user, UserView, "user.json")}
+  end
+
+  def render("index.json", %{users: %Page{} = users}) do
+    entries = render_many(users.entries, UserView, "user.json")
+    %{data: %{users | entries: entries}}
   end
 
   def render("token.json", %{user: user}) do
