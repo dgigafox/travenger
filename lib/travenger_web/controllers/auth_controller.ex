@@ -27,7 +27,7 @@ defmodule TravengerWeb.AuthController do
     with {:ok, user} <- Accounts.auth_or_register_user(params) do
       conn
       |> put_view(TravengerWeb.UserView)
-      |> render("show.json", user: user)
+      |> render("token.json", user: user)
     end
   end
 end
