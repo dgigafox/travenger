@@ -45,6 +45,7 @@ defmodule Travenger.Mixfile do
       {:cors_plug, "~> 1.5"},
       {:httpoison, "~> 0.13"},
       {:scrivener_ecto, "~> 1.0"},
+      {:ecto_enum, "~> 1.0"},
 
       # Test, mock, lint, and coverage
       {:excoveralls, "~> 0.8", only: :test},

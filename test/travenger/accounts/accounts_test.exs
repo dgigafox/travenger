@@ -74,10 +74,10 @@ defmodule Travenger.AccountsTest do
     end
 
     test "filter by gender" do
-      insert(:user, gender: "male")
-      insert(:user, gender: "female")
+      insert(:user, gender: :male)
+      insert(:user, gender: :female)
       %{entries: list, total_entries: total} =
-        Accounts.list_users(%{gender: "male"})
+        Accounts.list_users(%{gender: :male})
 
       refute list == []
       assert total == 1
