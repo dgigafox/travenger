@@ -26,4 +26,10 @@ defmodule Travenger.Helpers.Queries do
   end
 
   def where_email(query, _params), do: query
+
+  def where_gender(query, %{gender: gender}) do
+    where(query, [q], q.gender == ^gender)
+  end
+
+  def where_gender(query, _params), do: query
 end

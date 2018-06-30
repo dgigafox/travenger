@@ -44,6 +44,9 @@ defmodule Travenger.Mixfile do
       {:ueberauth_facebook, "~> 0.7"},
       {:cors_plug, "~> 1.5"},
       {:httpoison, "~> 0.13"},
+      {:scrivener_ecto, "~> 1.0"},
+
+      # Test, mock, lint, and coverage
       {:excoveralls, "~> 0.8", only: :test},
       {:ex_machina, "~> 2.1"},
       {:mock, "~> 0.3.1", only: :test},
