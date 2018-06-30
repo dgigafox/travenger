@@ -6,6 +6,8 @@ defmodule TravengerWeb.UserController do
   alias Travenger.Accounts
   alias Travenger.Accounts.User
 
+  action_fallback TravengerWeb.FallbackController
+
   def show(conn, params) do
     with params <- string_keys_to_atom(params),
          %User{} = user <- Accounts.find_user(params) do
