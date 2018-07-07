@@ -16,6 +16,7 @@ defmodule Travenger.Groups.Group do
   schema "groups" do
     field(:name, :string)
     field(:image_url, :string)
+    field(:description, :string)
 
     many_to_many(:users, User, join_through: UserGroup)
     has_many(:events, Event)
@@ -23,7 +24,7 @@ defmodule Travenger.Groups.Group do
   end
 
   @doc false
-  def changeset(group, attrs) do
+def changeset(group, attrs \\ %{}) do
     group
     |> cast(attrs, [:name])
     |> validate_required([:name])
