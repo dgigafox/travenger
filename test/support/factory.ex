@@ -5,6 +5,7 @@ defmodule Travenger.Factory do
   use ExMachina.Ecto, repo: Travenger.Repo
 
   alias Travenger.Accounts.User
+  alias Travenger.Groups.Group
 
   def user_factory do
     email = sequence(:email, &"email-#{&1}@example.com")
@@ -19,6 +20,14 @@ defmodule Travenger.Factory do
       token:
         "EAAbTLLNZAHhUBAO2GaawhTqbrKAmhfNGdxtEAGVZCYFZAHSCZCfiTnLp1Tvq7VqkRUqQK9zCoXZAUnN9dNe9ZAIPhk3kO4W4H31ZAJVEEiqwLZABmQyQCwwCdKEPU64E2PDaPO3qL0tRy3ZAMPDOzRXL2rq8580dnbFwnZA67oioRHdwZDZD",
       provider: "facebook"
+    }
+  end
+
+  def group_factory do
+    %Group{
+      name: sequence("TravelGroup"),
+      image_url: "http://website.com/image.png",
+      description: "This is a sample group"
     }
   end
 end
