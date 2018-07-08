@@ -13,6 +13,8 @@ defmodule Travenger.Groups.Group do
 
   alias Travenger.Posts.Event
 
+  @group_attrs ~w(name image_url description)
+
   schema "groups" do
     field(:name, :string)
     field(:image_url, :string)
@@ -26,7 +28,7 @@ defmodule Travenger.Groups.Group do
   @doc false
 def changeset(group, attrs \\ %{}) do
     group
-    |> cast(attrs, [:name])
+    |> cast(attrs, @group_attrs)
     |> validate_required([:name])
   end
 end

@@ -4,7 +4,6 @@ defmodule TravengerWeb.GroupController do
   import Travenger.Helpers.Utils
 
   alias Travenger.Groups
-  alias Travenger.Groups.Group
 
   def create(conn, params) do
     with params <- string_keys_to_atom(params),
