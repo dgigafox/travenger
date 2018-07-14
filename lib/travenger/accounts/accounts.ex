@@ -14,7 +14,7 @@ defmodule Travenger.Accounts do
   """
   def auth_or_register_user(%{email: email} = attrs) do
     case find_user(%{email: email}) do
-      nil -> %User{}
+      nil -> %User{email: email}
       user -> user
     end
     |> User.changeset(attrs)

@@ -25,10 +25,7 @@ config :cors_plug,
   origin: ["*"],
   max_age: 86_400
 
-# Import environment specific config. This must remain at the bottom
-# of this file so it overrides the configuration defined above.
-import_config "#{Mix.env()}.exs"
-
+# Ueberauth Config
 config :ueberauth, Ueberauth,
   providers: [
     facebook:
@@ -42,3 +39,12 @@ config :ueberauth, Ueberauth,
 config :ueberauth, Ueberauth.Strategy.Facebook.OAuth,
   client_id: "1921038801247765",
   client_secret: "0b45c319eddc4279a92b0b5b0eb2b597"
+
+# Guardian Config
+config :travenger, Travenger.Guardian,
+  issuer: "Travenger",
+  secret_key: "L91+fAdDt3+Sxl+VDtPrOCM1MLG3WbRACYl3o6n9w8niR/t+LOh+LKWsVIGtUMjL"
+
+# Import environment specific config. This must remain at the bottom
+# of this file so it overrides the configuration defined above.
+import_config "#{Mix.env()}.exs"

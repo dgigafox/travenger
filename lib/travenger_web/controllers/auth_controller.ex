@@ -1,6 +1,14 @@
 defmodule TravengerWeb.AuthController do
+  @moduledoc """
+  Authentication Controller
+  """
+
   use TravengerWeb, :controller
-  import Travenger.Helpers.Utils
+
+  import Travenger.Helpers.{
+    Utils,
+    Token
+  }
 
   alias Travenger.Accounts
 
@@ -24,10 +32,11 @@ defmodule TravengerWeb.AuthController do
   end
 
   def authenticate_or_register(conn, params) do
-    with {:ok, user} <- Accounts.auth_or_register_user(params) do
+    with {:ok, user} <- Accounts.auth_or_register_user(params),
+         {:ok, token} <- generate_auth_token(user) do
       conn
       |> put_view(TravengerWeb.UserView)
-      |> render("token.json", user: user)
+      |> render("token.json", token: token)
     end
   end
 end

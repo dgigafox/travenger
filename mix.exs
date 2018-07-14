@@ -47,6 +47,9 @@ defmodule Travenger.Mixfile do
       {:scrivener_ecto, "~> 1.0"},
       {:ecto_enum, "~> 1.0"},
 
+      #Authentication
+      {:guardian, "~> 1.0"},
+
       # Test, mock, lint, and coverage
       {:excoveralls, "~> 0.8", only: :test},
       {:ex_machina, "~> 2.1"},
