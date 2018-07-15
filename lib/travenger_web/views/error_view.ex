@@ -1,12 +1,23 @@
 defmodule TravengerWeb.ErrorView do
   use TravengerWeb, :view
 
+  alias Phoenix.Controller
+
   @not_found %{
     status: "404",
     title: "Resource not found"
   }
 
+  @unauthorized %{
+    status: "401",
+    title: "Unauthorized"
+  }
+
   # JSON errors
+
+  def render("401.json", _assigns) do
+    %{errors: [@unauthorized]}
+  end
 
   def render("404.json", _assigns) do
     %{errors: [@not_found]}
@@ -26,6 +37,6 @@ defmodule TravengerWeb.ErrorView do
   # the template name. For example, "404.html" becomes
   # "Not Found".
   def template_not_found(template, _assigns) do
-    Phoenix.Controller.status_message_from_template(template)
+    Controller.status_message_from_template(template)
   end
 end

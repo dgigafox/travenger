@@ -6,6 +6,7 @@ defmodule TravengerWeb.FallbackController do
   use TravengerWeb, :controller
 
   alias Ecto.Changeset
+
   alias TravengerWeb.{
     ChangesetView,
     ErrorView

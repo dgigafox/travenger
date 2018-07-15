@@ -43,7 +43,9 @@ config :ueberauth, Ueberauth.Strategy.Facebook.OAuth,
 # Guardian Config
 config :travenger, Travenger.Guardian,
   issuer: "Travenger",
-  secret_key: "L91+fAdDt3+Sxl+VDtPrOCM1MLG3WbRACYl3o6n9w8niR/t+LOh+LKWsVIGtUMjL"
+  secret_key: "L91+fAdDt3+Sxl+VDtPrOCM1MLG3WbRACYl3o6n9w8niR/t+LOh+LKWsVIGtUMjL",
+  verify_module: Guardian.JWT,
+  allowed_algos: ["HS256"]
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
