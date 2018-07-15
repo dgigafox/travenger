@@ -13,8 +13,8 @@ defmodule TravengerWeb.UserView do
     %{data: %{users | entries: entries}}
   end
 
-  def render("token.json", %{user: user}) do
-    %{data: %{token: user.token}}
+  def render("token.json", %{token: token}) do
+    %{data: %{token: token}}
   end
 
   def render("user.json", %{user: user}) do
