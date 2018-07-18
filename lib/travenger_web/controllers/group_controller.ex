@@ -5,11 +5,11 @@ defmodule TravengerWeb.GroupController do
 
   alias Travenger.Groups
 
-  plug Travenger.Plugs.RequireAuth when action in [:create]
+  plug(Travenger.Plugs.RequireAuth when action in [:create])
 
-  def create(conn, params) do
+  def create(%{assigns: %{user: user}} = conn, params) do
     with params <- string_keys_to_atom(params),
-         {:ok, group} <- Groups.create_group(params) do
+         {:ok, group} <- Groups.create_group(user, params) do
       conn
       |> put_status(:created)
       |> render("show.json", %{group: group})

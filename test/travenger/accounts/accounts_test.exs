@@ -38,10 +38,11 @@ defmodule Travenger.AccountsTest do
     end
 
     test "find user by id and name", %{user: user} do
-      found_user = Accounts.find_user(%{
-        id: user.id,
-        name: user.name
-      })
+      found_user =
+        Accounts.find_user(%{
+          id: user.id,
+          name: user.name
+        })
 
       assert found_user.id == user.id
       assert found_user.name == user.name
@@ -76,8 +77,8 @@ defmodule Travenger.AccountsTest do
     test "filter by gender" do
       insert(:user, gender: :male)
       insert(:user, gender: :female)
-      %{entries: list, total_entries: total} =
-        Accounts.list_users(%{gender: :male})
+      params = %{gender: :male}
+      %{entries: list, total_entries: total} = Accounts.list_users(params)
 
       refute list == []
       assert total == 1

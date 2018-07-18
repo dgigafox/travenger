@@ -7,6 +7,5 @@ defmodule Travenger.Repo.Migrations.CreateUsersGroups do
       add(:group_id, references(:groups))
       timestamps()
     end
-
   end
 end

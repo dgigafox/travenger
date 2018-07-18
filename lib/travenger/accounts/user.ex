@@ -24,7 +24,8 @@ defmodule Travenger.Accounts.User do
     field(:last_name, :string)
     field(:gender, GenderTypeEnum)
 
-    many_to_many(:groups, Group, join_through: UserGroup)
+    has_many(:groups, UserGroup)
+    # many_to_many(:groups, Group, join_through: UserGroup)
     has_many(:events, Event)
     has_many(:blogs, Blog)
 

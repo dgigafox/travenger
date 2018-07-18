@@ -15,7 +15,11 @@ defmodule Travenger.Groups.GroupTest do
       ch = Group.changeset(%Group{})
 
       refute ch.valid?
-      assert ch.errors == [name: {"can't be blank", [validation: :required]}]
+
+      assert ch.errors == [
+               user: {"can't be blank", [validation: :required]},
+               name: {"can't be blank", [validation: :required]}
+             ]
     end
   end
 end

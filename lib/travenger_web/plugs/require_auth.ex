@@ -19,7 +19,13 @@ defmodule Travenger.Plugs.RequireAuth do
     |> parse_auth_token()
     |> get_resource()
     |> assign_to_conn(conn)
-    |> check_errors(conn)
+    |> case do
+      {:error, msg} ->
+        halt_conn({:error, msg}, conn)
+
+      conn ->
+        conn
+    end
   end
 
   ###########################################################################
@@ -55,12 +61,10 @@ defmodule Travenger.Plugs.RequireAuth do
 
   defp assign_to_conn({:error, msg}, _), do: {:error, msg}
 
-  defp check_errors({:error, _msg}, conn) do
+  defp halt_conn({:error, _msg}, conn) do
     conn
     |> put_status(401)
     |> Controller.render(ErrorView, "401.json")
     |> halt()
   end
-
-  defp check_errors(_, conn), do: conn
 end

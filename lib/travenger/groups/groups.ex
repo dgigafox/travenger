@@ -4,9 +4,9 @@ defmodule Travenger.Groups do
   """
 
   import Ecto.Query, warn: false
-  alias Travenger.Repo
 
   alias Travenger.Groups.Group
+  alias Travenger.Repo
 
   @doc """
   Returns the list of groups.
@@ -39,18 +39,12 @@ defmodule Travenger.Groups do
 
   @doc """
   Creates a group.
-
-  ## Examples
-
-      iex> create_group(%{field: value})
-      {:ok, %Group{}}
-
-      iex> create_group(%{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
   """
-  def create_group(attrs \\ %{}) do
-    %Group{}
+  def create_group(user, attrs) do
+    %Group{
+      user: user
+    }
+    |> Repo.preload([:members])
     |> Group.changeset(attrs)
     |> Repo.insert()
   end

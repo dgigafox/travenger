@@ -32,7 +32,6 @@ defmodule TravengerWeb.GroupControllerTest do
       params = params_for(:group)
       conn = build_conn()
       conn = post(conn, group_path(conn, :create), params)
-
       assert json_response(conn, 401)["errors"] == @unauthorized_error_code
     end
   end
