@@ -20,7 +20,6 @@ defmodule Travenger.Groups.Group do
     field(:image_url, :string)
     field(:description, :string)
 
-    # many_to_many(:users, User, join_through: UserGroup)'
     belongs_to(:user, User)
     has_many(:members, UserGroup)
     has_many(:events, Event)
