@@ -27,7 +27,8 @@ defmodule Travenger.Factory do
     %Group{
       name: sequence("TravelGroup"),
       image_url: "http://website.com/image.png",
-      description: "This is a sample group"
+      description: "This is a sample group",
+      user: build(:user)
     }
   end
 end
