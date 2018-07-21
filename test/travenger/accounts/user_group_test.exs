@@ -27,4 +27,18 @@ defmodule Travenger.Accounts.UserGroupTest do
              ]
     end
   end
+
+  describe "join_changeset/2" do
+    test "returns a valid changeset" do
+      ch =
+        %UserGroup{
+          group: build(:group),
+          user: build(:user)
+        }
+        |> UserGroup.join_changeset()
+
+      assert ch.valid?
+      assert ch.changes[:membership_status]
+    end
+  end
 end
