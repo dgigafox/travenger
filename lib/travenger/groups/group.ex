@@ -11,6 +11,7 @@ defmodule Travenger.Groups.Group do
     UserGroup
   }
 
+  alias Travenger.Groups.MembershipStatus
   alias Travenger.Posts.Event
 
   @group_attrs ~w(name image_url description)
@@ -40,7 +41,11 @@ defmodule Travenger.Groups.Group do
     put_assoc(ch, :members, [
       %UserGroup{
         role: :creator,
-        user: get_field(ch, :user)
+        user: get_field(ch, :user),
+        membership_status: %MembershipStatus{
+          status: :approved,
+          approved_at: DateTime.utc_now()
+        }
       }
     ])
   end

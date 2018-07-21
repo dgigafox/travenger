@@ -4,8 +4,15 @@ defmodule Travenger.Factory do
   """
   use ExMachina.Ecto, repo: Travenger.Repo
 
-  alias Travenger.Accounts.User
-  alias Travenger.Groups.Group
+  alias Travenger.Accounts.{
+    User,
+    UserGroup
+  }
+
+  alias Travenger.Groups.{
+    Group,
+    MembershipStatus
+  }
 
   def user_factory do
     email = sequence(:email, &"email-#{&1}@example.com")
@@ -29,6 +36,21 @@ defmodule Travenger.Factory do
       image_url: "http://website.com/image.png",
       description: "This is a sample group",
       user: build(:user)
+    }
+  end
+
+  def user_group_factory do
+    %UserGroup{
+      user: build(:user),
+      group: build(:group),
+      role: :member
+    }
+  end
+
+  def membership_status_factory do
+    %MembershipStatus{
+      status: :pending,
+      joined_at: DateTime.utc_now()
     }
   end
 end
