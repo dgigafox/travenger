@@ -3,6 +3,7 @@ defmodule :"Elixir.Travenger.Repo.Migrations.Add-membership-statuses-table" do
 
   def change do
     create table(:membership_statuses) do
+      add(:user_group_id, references(:users_groups))
       add(:status, :integer)
       add(:approved_at, :naive_datetime)
       add(:banned_at, :naive_datetime)

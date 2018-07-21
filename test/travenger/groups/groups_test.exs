@@ -28,6 +28,12 @@ defmodule Travenger.GroupsTest do
       assert head.role == :creator
       assert head.user_id == user.id
     end
+
+    test "creates an approved membership status", %{group: group} do
+      [head | _] = group.members
+      assert head.membership_status.status == :approved
+      assert head.membership_status.approved_at
+    end
   end
 
   describe "join_group/2" do
