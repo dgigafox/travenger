@@ -10,7 +10,8 @@ defenum(
   UserRoleEnum,
   creator: 0,
   admin: 1,
-  member: 2
+  member: 2,
+  waiting: 3
 )
 
 defenum(
