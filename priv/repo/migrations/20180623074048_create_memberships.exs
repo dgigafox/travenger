@@ -1,8 +1,8 @@
-defmodule Travenger.Repo.Migrations.CreateUsersGroups do
+defmodule Travenger.Repo.Migrations.CreateMemberships do
   use Ecto.Migration
 
   def change do
-    create table(:users_groups) do
+    create table(:memberships) do
       add(:user_id, references(:users))
       add(:group_id, references(:groups))
       timestamps()

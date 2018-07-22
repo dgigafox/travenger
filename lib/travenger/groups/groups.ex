@@ -6,8 +6,8 @@ defmodule Travenger.Groups do
   import Ecto.Query, warn: false
 
   alias Travenger.Accounts.{
-    User,
-    UserGroup
+    Membership,
+    User
   }
 
   alias Travenger.Groups.Group
@@ -105,12 +105,12 @@ defmodule Travenger.Groups do
   Joins a group
   """
   def join_group(%User{} = user, %Group{} = group) do
-    %UserGroup{
+    %Membership{
       user: user,
       group: group
     }
     |> Repo.preload([:membership_status])
-    |> UserGroup.join_changeset()
+    |> Membership.join_changeset()
     |> Repo.insert()
   end
 end

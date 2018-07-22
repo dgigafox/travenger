@@ -5,8 +5,8 @@ defmodule Travenger.Factory do
   use ExMachina.Ecto, repo: Travenger.Repo
 
   alias Travenger.Accounts.{
-    User,
-    UserGroup
+    Membership,
+    User
   }
 
   alias Travenger.Groups.{
@@ -39,8 +39,8 @@ defmodule Travenger.Factory do
     }
   end
 
-  def user_group_factory do
-    %UserGroup{
+  def membership_factory do
+    %Membership{
       user: build(:user),
       group: build(:group),
       role: :member

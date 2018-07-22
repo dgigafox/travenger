@@ -4,7 +4,7 @@ defmodule Travenger.Groups.MembershipStatus do
   """
   use Ecto.Schema
 
-  alias Travenger.Accounts.UserGroup
+  alias Travenger.Accounts.Membership
 
   schema "membership_statuses" do
     field(:status, MembershipStatusEnum, default: :pending)
@@ -15,7 +15,7 @@ defmodule Travenger.Groups.MembershipStatus do
     field(:unbanned_at, :naive_datetime)
     field(:accepted_at, :naive_datetime)
 
-    belongs_to(:membership, UserGroup)
+    belongs_to(:membership, Membership)
 
     timestamps()
   end

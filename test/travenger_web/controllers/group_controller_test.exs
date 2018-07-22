@@ -8,7 +8,7 @@ defmodule TravengerWeb.GroupControllerTest do
   import Travenger.TestHelpers
 
   alias TravengerWeb.GroupView
-  alias TravengerWeb.UserGroupView
+  alias TravengerWeb.MembershipView
 
   @unauthorized_error_code [%{"status" => "401", "title" => "Unauthorized"}]
 
@@ -45,16 +45,16 @@ defmodule TravengerWeb.GroupControllerTest do
     setup %{conn: conn} do
       group = insert(:group)
       conn = post(conn, group_path(conn, :join, group.id))
-      %{assigns: %{user_group: user_group}} = conn
+      %{assigns: %{membership: membership}} = conn
 
-      %{user_group: user_group, conn: conn}
+      %{membership: membership, conn: conn}
     end
 
-    test "creates and returns a user_group", %{
-      user_group: user_group,
+    test "creates and returns a membership", %{
+      membership: membership,
       conn: conn
     } do
-      expected = render_json(UserGroupView, "show.json", %{user_group: user_group})
+      expected = render_json(MembershipView, "show.json", %{membership: membership})
       assert json_response(conn, :ok) == expected
     end
 
