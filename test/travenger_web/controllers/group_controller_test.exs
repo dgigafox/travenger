@@ -20,12 +20,16 @@ defmodule TravengerWeb.GroupControllerTest do
   end
 
   describe "create/2" do
-    test "creates and returns group", %{conn: conn} do
+    setup %{conn: conn} do
       params = params_for(:group)
       conn = post(conn, group_path(conn, :create), params)
       %{assigns: %{group: group}} = conn
-      expected = render_json(GroupView, "show.json", %{group: group})
 
+      %{group: group, conn: conn}
+    end
+
+    test "creates and returns group", %{group: group, conn: conn} do
+      expected = render_json(GroupView, "show.json", %{group: group})
       assert json_response(conn, :created) == expected
     end
 
@@ -38,12 +42,19 @@ defmodule TravengerWeb.GroupControllerTest do
   end
 
   describe "join/2" do
-    test "creates and returns a user_group", %{conn: conn} do
+    setup %{conn: conn} do
       group = insert(:group)
       conn = post(conn, group_path(conn, :join, group.id))
       %{assigns: %{user_group: user_group}} = conn
-      expected = render_json(UserGroupView, "show.json", %{user_group: user_group})
 
+      %{user_group: user_group, conn: conn}
+    end
+
+    test "creates and returns a user_group", %{
+      user_group: user_group,
+      conn: conn
+    } do
+      expected = render_json(UserGroupView, "show.json", %{user_group: user_group})
       assert json_response(conn, :ok) == expected
     end
 
