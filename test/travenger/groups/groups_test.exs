@@ -77,4 +77,19 @@ defmodule Travenger.GroupsTest do
       assert ch.errors == [user_id_group_id: {"has already been taken", []}]
     end
   end
+
+  describe "approve_join_request/1" do
+    setup do
+      membership = insert(:membership)
+      {:ok, membership_status} = Groups.approve_join_request(membership)
+
+      %{membership_status: membership_status}
+    end
+
+    test "approves a pending group membership request", %{membership_status: mstatus} do
+      assert mstatus.id
+      assert mstatus.approved_at
+      assert mstatus.status == :approved
+    end
+  end
 end

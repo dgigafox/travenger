@@ -43,6 +43,12 @@ defmodule Travenger.Accounts.Membership do
     |> put_membership_status()
   end
 
+  def approve_changeset(membership) do
+    membership
+    |> change()
+    |> put_change(:role, :member)
+  end
+
   defp put_membership_status(ch) do
     put_assoc(ch, :membership_status, %MembershipStatus{
       status: :pending,
