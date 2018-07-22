@@ -5,12 +5,18 @@ defmodule Travenger.Groups do
 
   import Ecto.Query, warn: false
 
+  alias Ecto.Multi
+
   alias Travenger.Accounts.{
     Membership,
     User
   }
 
-  alias Travenger.Groups.Group
+  alias Travenger.Groups.{
+    Group,
+    MembershipStatus
+  }
+
   alias Travenger.Repo
 
   @doc """
@@ -112,5 +118,22 @@ defmodule Travenger.Groups do
     |> Repo.preload([:membership_status])
     |> Membership.join_changeset()
     |> Repo.insert()
+  end
+
+  @doc """
+  Approves a join request
+  """
+  def approve_join_request(%Membership{membership_status: mstatus} = m) do
+    Multi.new()
+    |> Multi.update(
+      :membership_status,
+      MembershipStatus.update_changeset(mstatus, %{status: :approved})
+    )
+    |> Multi.update(:membership, Membership.approve_changeset(m))
+    |> Repo.transaction()
+    |> case do
+      {:error, _ops, val, _ch} -> {:error, val}
+      {:ok, %{membership_status: mstatus}} -> {:ok, mstatus}
+    end
   end
 end

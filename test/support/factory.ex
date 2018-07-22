@@ -43,7 +43,8 @@ defmodule Travenger.Factory do
     %Membership{
       user: build(:user),
       group: build(:group),
-      role: :member
+      role: :waiting,
+      membership_status: build(:membership_status)
     }
   end
 

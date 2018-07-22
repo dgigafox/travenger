@@ -3,6 +3,7 @@ defmodule Travenger.Groups.MembershipStatus do
   Group schema
   """
   use Ecto.Schema
+  import Ecto.Changeset
 
   alias Travenger.Accounts.Membership
 
@@ -18,5 +19,12 @@ defmodule Travenger.Groups.MembershipStatus do
     belongs_to(:membership, Membership)
 
     timestamps()
+  end
+
+  def update_changeset(membership_status, attrs) do
+    membership_status
+    |> cast(attrs, [:status])
+    |> validate_required(:status)
+    |> put_change(:approved_at, DateTime.utc_now())
   end
 end
