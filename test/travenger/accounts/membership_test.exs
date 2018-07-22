@@ -1,23 +1,23 @@
-defmodule Travenger.Accounts.UserGroupTest do
+defmodule Travenger.Accounts.MembershipTest do
   use ExUnit.Case, async: true
 
   import Travenger.Factory
-  alias Travenger.Accounts.UserGroup
+  alias Travenger.Accounts.Membership
 
   describe "changeset/2" do
     test "returns a valid changeset" do
       ch =
-        %UserGroup{
+        %Membership{
           group: build(:group),
           user: build(:user)
         }
-        |> UserGroup.changeset(%{role: :member})
+        |> Membership.changeset(%{role: :member})
 
       assert ch.valid?
     end
 
     test "returns invalid" do
-      ch = UserGroup.changeset(%UserGroup{}, %{})
+      ch = Membership.changeset(%Membership{}, %{})
 
       refute ch.valid?
 
@@ -31,11 +31,11 @@ defmodule Travenger.Accounts.UserGroupTest do
   describe "join_changeset/2" do
     test "returns a valid changeset" do
       ch =
-        %UserGroup{
+        %Membership{
           group: build(:group),
           user: build(:user)
         }
-        |> UserGroup.join_changeset()
+        |> Membership.join_changeset()
 
       assert ch.valid?
       assert ch.changes[:membership_status]

@@ -7,8 +7,8 @@ defmodule Travenger.Groups.Group do
   import Ecto.Changeset
 
   alias Travenger.Accounts.{
-    User,
-    UserGroup
+    Membership,
+    User
   }
 
   alias Travenger.Groups.MembershipStatus
@@ -22,7 +22,7 @@ defmodule Travenger.Groups.Group do
     field(:description, :string)
 
     belongs_to(:user, User)
-    has_many(:members, UserGroup)
+    has_many(:members, Membership)
     has_many(:events, Event)
     timestamps()
   end
@@ -39,7 +39,7 @@ defmodule Travenger.Groups.Group do
 
   defp put_member(ch) do
     put_assoc(ch, :members, [
-      %UserGroup{
+      %Membership{
         role: :creator,
         user: get_field(ch, :user),
         membership_status: %MembershipStatus{

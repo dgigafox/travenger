@@ -39,21 +39,21 @@ defmodule Travenger.GroupsTest do
   describe "join_group/2" do
     setup %{user: user} do
       group = insert(:group)
-      {:ok, user_group} = Groups.join_group(user, group)
-      %{user_group: user_group}
+      {:ok, membership} = Groups.join_group(user, group)
+      %{membership: membership}
     end
 
-    test "returns a user group", %{user_group: user_group} do
-      assert user_group.id
-      assert user_group.user
-      assert user_group.group
-      assert user_group.role == :waiting
+    test "returns a user group", %{membership: membership} do
+      assert membership.id
+      assert membership.user
+      assert membership.group
+      assert membership.role == :waiting
     end
 
-    test "creates a pending membership status", %{user_group: user_group} do
-      assert user_group.membership_status
-      assert user_group.membership_status.status == :pending
-      assert user_group.membership_status.joined_at
+    test "creates a pending membership status", %{membership: membership} do
+      assert membership.membership_status
+      assert membership.membership_status.status == :pending
+      assert membership.membership_status.joined_at
     end
   end
 
@@ -62,7 +62,7 @@ defmodule Travenger.GroupsTest do
       group = insert(:group)
 
       insert(
-        :user_group,
+        :membership,
         group: group,
         user: user,
         membership_status: insert(:membership_status)

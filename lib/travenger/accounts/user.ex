@@ -5,7 +5,7 @@ defmodule Travenger.Accounts.User do
   use Ecto.Schema
   import Ecto.Changeset
 
-  alias Travenger.Accounts.UserGroup
+  alias Travenger.Accounts.Membership
 
   alias Travenger.Posts.{
     Blog,
@@ -23,7 +23,7 @@ defmodule Travenger.Accounts.User do
     field(:last_name, :string)
     field(:gender, GenderTypeEnum)
 
-    has_many(:groups, UserGroup)
+    has_many(:groups, Membership)
     has_many(:events, Event)
     has_many(:blogs, Blog)
 

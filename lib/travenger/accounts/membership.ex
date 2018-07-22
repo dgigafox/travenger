@@ -1,4 +1,4 @@
-defmodule Travenger.Accounts.UserGroup do
+defmodule Travenger.Accounts.Membership do
   @moduledoc """
   User Group association schema
   """
@@ -24,8 +24,8 @@ defmodule Travenger.Accounts.UserGroup do
     timestamps()
   end
 
-  def changeset(user_group, attrs \\ %{}) do
-    user_group
+  def changeset(membership, attrs \\ %{}) do
+    membership
     |> cast(attrs, @required_attrs)
     |> validate_required(@required_attrs ++ @required_assoc)
     |> unique_constraint(:user_id_group_id)
@@ -33,8 +33,8 @@ defmodule Travenger.Accounts.UserGroup do
     |> assoc_constraint(:group)
   end
 
-  def join_changeset(user_group, attrs \\ %{}) do
-    user_group
+  def join_changeset(membership, attrs \\ %{}) do
+    membership
     |> changeset(attrs)
     |> no_assoc_constraint(
       :membership_status,
