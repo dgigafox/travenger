@@ -2,7 +2,6 @@ defmodule TravengerWeb.GroupView do
   use TravengerWeb, :view
 
   alias __MODULE__
-  alias Scrivener.Page
 
   def render("show.json", %{group: group}) do
     %{data: render_one(group, GroupView, "group.json")}
@@ -10,6 +9,7 @@ defmodule TravengerWeb.GroupView do
 
   def render("group.json", %{group: group}) do
     %{
+      id: group.id,
       name: group.name,
       image_url: group.image_url,
       description: group.description

@@ -8,6 +8,7 @@ defmodule TravengerWeb.GroupControllerTest do
   import Travenger.TestHelpers
 
   alias TravengerWeb.GroupView
+  alias TravengerWeb.UserGroupView
 
   @unauthorized_error_code [%{"status" => "401", "title" => "Unauthorized"}]
 
@@ -19,12 +20,16 @@ defmodule TravengerWeb.GroupControllerTest do
   end
 
   describe "create/2" do
-    test "creates and returns group", %{conn: conn} do
+    setup %{conn: conn} do
       params = params_for(:group)
       conn = post(conn, group_path(conn, :create), params)
       %{assigns: %{group: group}} = conn
-      expected = render_json(GroupView, "show.json", %{group: group})
 
+      %{group: group, conn: conn}
+    end
+
+    test "creates and returns group", %{group: group, conn: conn} do
+      expected = render_json(GroupView, "show.json", %{group: group})
       assert json_response(conn, :created) == expected
     end
 
@@ -32,6 +37,31 @@ defmodule TravengerWeb.GroupControllerTest do
       params = params_for(:group)
       conn = build_conn()
       conn = post(conn, group_path(conn, :create), params)
+      assert json_response(conn, 401)["errors"] == @unauthorized_error_code
+    end
+  end
+
+  describe "join/2" do
+    setup %{conn: conn} do
+      group = insert(:group)
+      conn = post(conn, group_path(conn, :join, group.id))
+      %{assigns: %{user_group: user_group}} = conn
+
+      %{user_group: user_group, conn: conn}
+    end
+
+    test "creates and returns a user_group", %{
+      user_group: user_group,
+      conn: conn
+    } do
+      expected = render_json(UserGroupView, "show.json", %{user_group: user_group})
+      assert json_response(conn, :ok) == expected
+    end
+
+    test "returns error if user is not authenticated" do
+      group = insert(:group)
+      conn = build_conn()
+      conn = post(conn, group_path(conn, :join, group.id))
       assert json_response(conn, 401)["errors"] == @unauthorized_error_code
     end
   end

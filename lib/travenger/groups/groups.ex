@@ -40,7 +40,7 @@ defmodule Travenger.Groups do
       ** (Ecto.NoResultsError)
 
   """
-  def get_group!(id), do: Repo.get!(Group, id)
+  def get_group(id), do: Repo.get(Group, id)
 
   @doc """
   Creates a group.

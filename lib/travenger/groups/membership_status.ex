@@ -4,11 +4,7 @@ defmodule Travenger.Groups.MembershipStatus do
   """
   use Ecto.Schema
 
-  import Ecto.Changeset
-
   alias Travenger.Accounts.UserGroup
-
-  @group_attrs ~w(name image_url description)
 
   schema "membership_statuses" do
     field(:status, MembershipStatusEnum, default: :pending)

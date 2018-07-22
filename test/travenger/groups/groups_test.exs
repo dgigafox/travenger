@@ -47,7 +47,7 @@ defmodule Travenger.GroupsTest do
       assert user_group.id
       assert user_group.user
       assert user_group.group
-      assert user_group.role == :member
+      assert user_group.role == :waiting
     end
 
     test "creates a pending membership status", %{user_group: user_group} do
