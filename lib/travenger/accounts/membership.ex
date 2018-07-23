@@ -15,7 +15,7 @@ defmodule Travenger.Accounts.Membership do
   @required_attrs ~w(role)a
   @required_assoc ~w(user group)a
 
-  schema "users_groups" do
+  schema "memberships" do
     field(:role, UserRoleEnum, default: :waiting)
 
     belongs_to(:user, User)

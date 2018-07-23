@@ -3,6 +3,7 @@ defmodule Travenger.Repo.Migrations.CreateMemberships do
 
   def change do
     create table(:memberships) do
+      add(:role, :integer)
       add(:user_id, references(:users))
       add(:group_id, references(:groups))
       timestamps()
