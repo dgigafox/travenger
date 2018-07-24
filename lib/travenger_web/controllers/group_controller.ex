@@ -18,9 +18,8 @@ defmodule TravengerWeb.GroupController do
     end
   end
 
-  def join(%{assigns: %{user: user}} = conn, params) do
-    with %{id: group_id} <- string_keys_to_atom(params),
-         %Group{} = group <- Groups.get_group(group_id),
+  def join(%{assigns: %{user: user}} = conn, %{"group_id" => gid}) do
+    with %Group{} = group <- Groups.get_group(gid),
          {:ok, membership} <- Groups.join_group(user, group) do
       conn
       |> put_status(:ok)

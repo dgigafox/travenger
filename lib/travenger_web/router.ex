@@ -26,8 +26,14 @@ defmodule TravengerWeb.Router do
     resources("/blogs", BlogController)
     resources("/users", UserController)
 
-    post("/groups/:id/join", GroupController, :join)
-    resources("/groups", GroupController)
+    resources("/groups", GroupController) do
+      post("/join", GroupController, :join)
+
+      resources("/memberships", MembershipController) do
+        put("/approve", MembershipController, :approve)
+      end
+    end
+
     resources("/events", EventController)
   end
 

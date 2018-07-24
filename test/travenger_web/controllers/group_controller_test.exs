@@ -44,7 +44,7 @@ defmodule TravengerWeb.GroupControllerTest do
   describe "join/2" do
     setup %{conn: conn} do
       group = insert(:group)
-      conn = post(conn, group_path(conn, :join, group.id))
+      conn = post(conn, group_group_path(conn, :join, group.id))
       %{assigns: %{membership: membership}} = conn
 
       %{membership: membership, conn: conn}
@@ -61,7 +61,7 @@ defmodule TravengerWeb.GroupControllerTest do
     test "returns error if user is not authenticated" do
       group = insert(:group)
       conn = build_conn()
-      conn = post(conn, group_path(conn, :join, group.id))
+      conn = post(conn, group_group_path(conn, :join, group.id))
       assert json_response(conn, 401)["errors"] == @unauthorized_error_code
     end
   end

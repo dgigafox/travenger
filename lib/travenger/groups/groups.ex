@@ -4,6 +4,8 @@ defmodule Travenger.Groups do
   """
 
   import Ecto.Query, warn: false
+  import Travenger.Helpers.Queries
+  import Travenger.Helpers.Queries.Membership
 
   alias Ecto.Multi
 
@@ -123,17 +125,49 @@ defmodule Travenger.Groups do
   @doc """
   Approves a join request
   """
-  def approve_join_request(%Membership{membership_status: mstatus} = m) do
+  def approve_join_request(%Membership{} = membership) do
+    m =
+      membership
+      |> Repo.preload([:membership_status, :user, :group])
+
+    params = %{status: :approved}
+
     Multi.new()
     |> Multi.update(
       :membership_status,
-      MembershipStatus.update_changeset(mstatus, %{status: :approved})
+      MembershipStatus.update_changeset(m.membership_status, params)
     )
-    |> Multi.update(:membership, Membership.approve_changeset(m))
+    |> Multi.run(:membership, &update_membership_status(&1, m))
     |> Repo.transaction()
     |> case do
-      {:error, _ops, val, _ch} -> {:error, val}
-      {:ok, %{membership_status: mstatus}} -> {:ok, mstatus}
+      {:error, _ops, val, _ch} ->
+        {:error, val}
+
+      {:ok, %{membership: membership}} ->
+        {:ok, membership}
     end
   end
+
+  defp update_membership_status(%{membership_status: mstatus}, membership) do
+    membership
+    |> Map.put(:membership_status, mstatus)
+    |> Membership.approve_changeset()
+    |> Repo.update()
+  end
+
+  @doc """
+  Find admin
+  """
+  def find_group_admin(params) do
+    Membership
+    |> where_group(params)
+    |> where_user(params)
+    |> where_admin(params)
+    |> Repo.one()
+  end
+
+  @doc """
+  Get membership via id
+  """
+  def get_membership(id), do: Repo.get(Membership, id)
 end

@@ -13,10 +13,19 @@ defmodule TravengerWeb.ErrorView do
     title: "Unauthorized"
   }
 
+  @forbidden %{
+    status: "403",
+    title: "Forbidden"
+  }
+
   # JSON errors
 
   def render("401.json", _assigns) do
     %{errors: [@unauthorized]}
+  end
+
+  def render("403.json", _assigns) do
+    %{errors: [@forbidden]}
   end
 
   def render("404.json", _assigns) do

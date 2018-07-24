@@ -32,4 +32,16 @@ defmodule Travenger.Helpers.Queries do
   end
 
   def where_gender(query, _params), do: query
+
+  def where_group(query, %{group_id: gid}) do
+    where(query, [q], q.group_id == ^gid)
+  end
+
+  def where_group(query, _params), do: query
+
+  def where_user(query, %{user_id: uid}) do
+    where(query, [q], q.user_id == ^uid)
+  end
+
+  def where_user(query, _params), do: query
 end

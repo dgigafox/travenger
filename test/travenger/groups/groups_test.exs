@@ -81,15 +81,16 @@ defmodule Travenger.GroupsTest do
   describe "approve_join_request/1" do
     setup do
       membership = insert(:membership)
-      {:ok, membership_status} = Groups.approve_join_request(membership)
+      {:ok, membership} = Groups.approve_join_request(membership)
 
-      %{membership_status: membership_status}
+      %{membership: membership}
     end
 
-    test "approves a pending group membership request", %{membership_status: mstatus} do
-      assert mstatus.id
-      assert mstatus.approved_at
-      assert mstatus.status == :approved
+    test "approves a pending group membership request", %{membership: membership} do
+      assert membership.id
+      assert membership.role == :member
+      assert membership.membership_status.status == :approved
+      assert membership.membership_status.approved_at
     end
   end
 end
