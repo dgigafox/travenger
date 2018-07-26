@@ -46,6 +46,7 @@ defmodule Travenger.Accounts.Membership do
   def approve_changeset(membership) do
     membership
     |> change()
+    |> cast_assoc(:membership_status)
     |> put_change(:role, :member)
   end
 
