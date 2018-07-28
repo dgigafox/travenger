@@ -115,4 +115,27 @@ defmodule Travenger.GroupsTest do
       assert group.description == params.description
     end
   end
+
+  describe "list_groups/1" do
+    setup %{user: user} do
+      group = insert(:group, user: user)
+      insert(:group)
+
+      %{group: group}
+    end
+
+    test "list all groups" do
+      %{total_entries: total} = Groups.list_groups()
+
+      assert total == 2
+    end
+
+    test "filter by creator", %{user: user} do
+      params = %{user_id: user.id}
+      %{entries: groups} = Groups.list_groups(params)
+
+      refute groups == []
+      assert Enum.all?(groups, fn group -> group.user_id == user.id end)
+    end
+  end
 end
