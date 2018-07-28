@@ -22,4 +22,17 @@ defmodule Travenger.Groups.GroupTest do
              ]
     end
   end
+
+  describe "update_changeset/2" do
+    test "returns a valid changeset" do
+      attrs = %{
+        image_url: "http://website.com/new_image.png",
+        description: "new description"
+      }
+
+      ch = Group.update_changeset(build(:group), attrs)
+
+      assert ch.valid?
+    end
+  end
 end
