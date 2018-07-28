@@ -37,6 +37,11 @@ defmodule Travenger.Groups.Group do
     |> put_member()
   end
 
+  def update_changeset(group, attrs) do
+    group
+    |> cast(attrs, @group_attrs)
+  end
+
   defp put_member(ch) do
     put_assoc(ch, :members, [
       %Membership{

@@ -93,4 +93,26 @@ defmodule Travenger.GroupsTest do
       assert membership.membership_status.approved_at
     end
   end
+
+  describe "update_group/2" do
+    setup do
+      group = insert(:group)
+
+      params = %{
+        name: "New Group Name",
+        image_url: "http://website.com/new_image.png",
+        description: "new description"
+      }
+
+      {:ok, group} = Groups.update_group(group, params)
+
+      %{group: group, params: params}
+    end
+
+    test "updates a group", %{group: group, params: params} do
+      assert group.name == params.name
+      assert group.image_url == params.image_url
+      assert group.description == params.description
+    end
+  end
 end

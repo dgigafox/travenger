@@ -76,7 +76,7 @@ defmodule Travenger.Groups do
   """
   def update_group(%Group{} = group, attrs) do
     group
-    |> Group.changeset(attrs)
+    |> Group.update_changeset(attrs)
     |> Repo.update()
   end
 
