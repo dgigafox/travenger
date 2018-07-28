@@ -7,7 +7,8 @@ defmodule TravengerWeb.GroupController do
   alias Travenger.Groups.Group
   alias TravengerWeb.MembershipView
 
-  plug(Travenger.Plugs.RequireAuth when action in [:create, :join])
+  plug(Travenger.Plugs.RequireAuth when action in [:create, :join, :update])
+  plug(Travenger.Plugs.CheckGroupAdmin when action in [:update])
 
   def create(%{assigns: %{user: user}} = conn, params) do
     with params <- string_keys_to_atom(params),
@@ -25,6 +26,14 @@ defmodule TravengerWeb.GroupController do
       |> put_status(:ok)
       |> put_view(MembershipView)
       |> render("show.json", membership: membership)
+    end
+  end
+
+  def update(conn, %{"id" => gid} = params) do
+    with params <- string_keys_to_atom(params),
+         %Group{} = group <- Groups.get_group(gid),
+         {:ok, group} <- Groups.update_group(group, params) do
+      render(conn, "show.json", group: group)
     end
   end
 end
