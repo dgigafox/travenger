@@ -30,8 +30,10 @@ defmodule Travenger.Groups do
       [%Group{}, ...]
 
   """
-  def list_groups do
-    Repo.all(Group)
+  def list_groups(params \\ %{}) do
+    Group
+    |> where_user(params)
+    |> Repo.paginate(params)
   end
 
   @doc """
