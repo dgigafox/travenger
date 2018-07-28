@@ -10,6 +10,11 @@ defmodule TravengerWeb.GroupController do
   plug(Travenger.Plugs.RequireAuth when action in [:create, :join, :update])
   plug(Travenger.Plugs.CheckGroupAdmin when action in [:update])
 
+  def index(conn, params \\ %{}) do
+    params = string_keys_to_atom(params)
+    render(conn, "index.json", groups: Groups.list_groups(params))
+  end
+
   def create(%{assigns: %{user: user}} = conn, params) do
     with params <- string_keys_to_atom(params),
          {:ok, group} <- Groups.create_group(user, params) do

@@ -12,12 +12,31 @@ defmodule TravengerWeb.GroupControllerTest do
 
   @unauthorized_error_code [%{"status" => "401", "title" => "Unauthorized"}]
   @forbidden_error_code [%{"status" => "403", "title" => "Forbidden"}]
+  @page_fields %{"page_size" => 20, "page_number" => 1}
 
   setup do
     user = insert(:user)
     conn = build_user_conn(user, &build_conn/0, &put_req_header/3)
 
     %{conn: conn, user: user}
+  end
+
+  describe "index/2" do
+    setup %{conn: conn} do
+      insert(:group)
+      conn = get(conn, group_path(conn, :index), @page_fields)
+      %{"data" => data} = json_response(conn, :ok)
+
+      %{data: data}
+    end
+
+    test "returns a list of groups", %{data: data} do
+      assert data["page_number"] == @page_fields["page_number"]
+      assert data["page_size"] == @page_fields["page_size"]
+      assert data["total_entries"] == 1
+      assert data["total_pages"] == 1
+      refute data["entries"] == []
+    end
   end
 
   describe "create/2" do
