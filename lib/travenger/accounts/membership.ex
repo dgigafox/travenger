@@ -15,6 +15,8 @@ defmodule Travenger.Accounts.Membership do
   @required_attrs ~w(role)a
   @required_assoc ~w(user group)a
 
+  @existing_assoc_error "Member is already associated to this group"
+
   schema "memberships" do
     field(:role, UserRoleEnum, default: :waiting)
 
@@ -36,10 +38,7 @@ defmodule Travenger.Accounts.Membership do
   def join_changeset(membership, attrs \\ %{}) do
     membership
     |> changeset(attrs)
-    |> no_assoc_constraint(
-      :membership_status,
-      message: "Member is already associated to this group"
-    )
+    |> no_assoc_constraint(:membership_status, message: @existing_assoc_error)
     |> put_membership_status()
   end
 
@@ -48,6 +47,20 @@ defmodule Travenger.Accounts.Membership do
     |> change()
     |> cast_assoc(:membership_status)
     |> put_change(:role, :member)
+  end
+
+  def invite_changeset(membership, attrs \\ %{}) do
+    membership
+    |> changeset(attrs)
+    |> no_assoc_constraint(:membership_status, message: @existing_assoc_error)
+    |> put_invited_status()
+  end
+
+  defp put_invited_status(ch) do
+    put_assoc(ch, :membership_status, %MembershipStatus{
+      status: :invited,
+      invited_at: DateTime.utc_now()
+    })
   end
 
   defp put_membership_status(ch) do
