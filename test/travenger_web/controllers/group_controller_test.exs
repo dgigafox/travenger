@@ -39,6 +39,20 @@ defmodule TravengerWeb.GroupControllerTest do
     end
   end
 
+  describe "show/2" do
+    setup %{conn: conn} do
+      group = insert(:group)
+      conn = get(conn, group_path(conn, :show, group.id))
+      %{"data" => data} = json_response(conn, :ok)
+
+      %{data: data}
+    end
+
+    test "returns a group", %{data: data} do
+      assert data["id"]
+    end
+  end
+
   describe "create/2" do
     setup %{conn: conn} do
       params = params_for(:group)

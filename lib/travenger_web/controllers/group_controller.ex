@@ -15,6 +15,10 @@ defmodule TravengerWeb.GroupController do
     render(conn, "index.json", groups: Groups.list_groups(params))
   end
 
+  def show(conn, %{"id" => id}) do
+    render(conn, "show.json", group: Groups.get_group(id))
+  end
+
   def create(%{assigns: %{user: user}} = conn, params) do
     with params <- string_keys_to_atom(params),
          {:ok, group} <- Groups.create_group(user, params) do
