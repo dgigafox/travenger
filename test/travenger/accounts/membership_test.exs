@@ -50,4 +50,18 @@ defmodule Travenger.Accounts.MembershipTest do
       assert ch.changes[:role] == :member
     end
   end
+
+  describe "invite_changeset/2" do
+    test "returns a valid changeset" do
+      ch =
+        %Membership{
+          group: build(:group),
+          user: build(:user)
+        }
+        |> Membership.invite_changeset()
+
+      assert ch.valid?
+      assert ch.changes[:membership_status]
+    end
+  end
 end

@@ -40,6 +40,7 @@ defmodule Travenger.GroupsTest do
     setup %{user: user} do
       group = insert(:group)
       {:ok, membership} = Groups.join_group(user, group)
+
       %{membership: membership}
     end
 
@@ -69,6 +70,49 @@ defmodule Travenger.GroupsTest do
       )
 
       {:error, ch} = Groups.join_group(user, group)
+
+      %{ch: ch}
+    end
+
+    test "returns an error", %{ch: ch} do
+      assert ch.errors == [user_id_group_id: {"has already been taken", []}]
+    end
+  end
+
+  describe "invite/2" do
+    setup %{user: user} do
+      group = insert(:group)
+      {:ok, membership} = Groups.invite(user, group)
+
+      %{membership: membership}
+    end
+
+    test "returns a user group", %{membership: membership} do
+      assert membership.id
+      assert membership.user
+      assert membership.group
+      assert membership.role == :waiting
+    end
+
+    test "creates an invited membership status", %{membership: membership} do
+      assert membership.membership_status
+      assert membership.membership_status.status == :invited
+      assert membership.membership_status.invited_at
+    end
+  end
+
+  describe "invite/2 when member already have a membership to the group" do
+    setup %{user: user} do
+      group = insert(:group)
+
+      insert(
+        :membership,
+        group: group,
+        user: user,
+        membership_status: insert(:membership_status)
+      )
+
+      {:error, ch} = Groups.invite(user, group)
 
       %{ch: ch}
     end

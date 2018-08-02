@@ -172,4 +172,17 @@ defmodule Travenger.Groups do
   Get membership via id
   """
   def get_membership(id), do: Repo.get(Membership, id)
+
+  @doc """
+  Invite a user to be a member of the group
+  """
+  def invite(%User{} = user, %Group{} = group) do
+    %Membership{
+      user: user,
+      group: group
+    }
+    |> Repo.preload([:membership_status])
+    |> Membership.invite_changeset()
+    |> Repo.insert()
+  end
 end
