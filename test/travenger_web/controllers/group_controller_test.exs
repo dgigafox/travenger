@@ -153,4 +153,55 @@ defmodule TravengerWeb.GroupControllerTest do
       assert json_response(conn, 403)["errors"] == @forbidden_error_code
     end
   end
+
+  describe "invite/2" do
+    setup %{conn: conn, user: user} do
+      group = insert(:group)
+      insert(:membership, user: user, group: group, role: :admin)
+      params = %{user_id: insert(:user).id}
+      conn = post(conn, group_group_path(conn, :invite, group.id), params)
+      %{assigns: %{membership: membership}} = conn
+
+      %{
+        conn: conn,
+        membership: membership,
+        user: user,
+        group: group,
+        params: params
+      }
+    end
+
+    test "returns a membership with invited status", %{
+      conn: conn,
+      membership: m
+    } do
+      expected = render_json(MembershipView, "show.json", %{membership: m})
+      assert json_response(conn, :ok) == expected
+    end
+
+    test "returns error when user is not authenticated", %{
+      group: group,
+      params: params
+    } do
+      conn = build_conn()
+      conn = post(conn, group_group_path(conn, :invite, group.id), params)
+      assert json_response(conn, 401)["errors"] == @unauthorized_error_code
+    end
+  end
+
+  describe "invite/2 when user is not the creator/admin of the group" do
+    setup %{conn: conn, user: user} do
+      group = insert(:group)
+      insert(:membership, user: user, group: group, role: :member)
+
+      params = %{user_id: insert(:user).id}
+      conn = post(conn, group_group_path(conn, :invite, group.id), params)
+
+      %{conn: conn}
+    end
+
+    test "returns error", %{conn: conn} do
+      assert json_response(conn, 403)["errors"] == @forbidden_error_code
+    end
+  end
 end
