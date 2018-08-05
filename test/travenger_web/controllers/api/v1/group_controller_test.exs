@@ -1,4 +1,4 @@
-defmodule TravengerWeb.GroupControllerTest do
+defmodule TravengerWeb.Api.V1.GroupControllerTest do
   @moduledoc """
   Tests for Group Controller functions
   """
@@ -7,8 +7,8 @@ defmodule TravengerWeb.GroupControllerTest do
   import Travenger.Factory
   import Travenger.TestHelpers
 
-  alias TravengerWeb.GroupView
-  alias TravengerWeb.MembershipView
+  alias TravengerWeb.Api.V1.GroupView
+  alias TravengerWeb.Api.V1.MembershipView
 
   @unauthorized_error_code [%{"status" => "401", "title" => "Unauthorized"}]
   @forbidden_error_code [%{"status" => "403", "title" => "Forbidden"}]
@@ -24,7 +24,7 @@ defmodule TravengerWeb.GroupControllerTest do
   describe "index/2" do
     setup %{conn: conn} do
       insert(:group)
-      conn = get(conn, group_path(conn, :index), @page_fields)
+      conn = get(conn, api_v1_group_path(conn, :index), @page_fields)
       %{"data" => data} = json_response(conn, :ok)
 
       %{data: data}
@@ -42,7 +42,7 @@ defmodule TravengerWeb.GroupControllerTest do
   describe "show/2" do
     setup %{conn: conn} do
       group = insert(:group)
-      conn = get(conn, group_path(conn, :show, group.id))
+      conn = get(conn, api_v1_group_path(conn, :show, group.id))
       %{"data" => data} = json_response(conn, :ok)
 
       %{data: data}
@@ -56,7 +56,7 @@ defmodule TravengerWeb.GroupControllerTest do
   describe "create/2" do
     setup %{conn: conn} do
       params = params_for(:group)
-      conn = post(conn, group_path(conn, :create), params)
+      conn = post(conn, api_v1_group_path(conn, :create), params)
       %{assigns: %{group: group}} = conn
 
       %{group: group, conn: conn}
@@ -70,7 +70,7 @@ defmodule TravengerWeb.GroupControllerTest do
     test "returns error if user is not authenticated" do
       params = params_for(:group)
       conn = build_conn()
-      conn = post(conn, group_path(conn, :create), params)
+      conn = post(conn, api_v1_group_path(conn, :create), params)
       assert json_response(conn, 401)["errors"] == @unauthorized_error_code
     end
   end
@@ -78,7 +78,7 @@ defmodule TravengerWeb.GroupControllerTest do
   describe "join/2" do
     setup %{conn: conn} do
       group = insert(:group)
-      conn = post(conn, group_group_path(conn, :join, group.id))
+      conn = post(conn, api_v1_group_group_path(conn, :join, group.id))
       %{assigns: %{membership: membership}} = conn
 
       %{membership: membership, conn: conn}
@@ -95,7 +95,7 @@ defmodule TravengerWeb.GroupControllerTest do
     test "returns error if user is not authenticated" do
       group = insert(:group)
       conn = build_conn()
-      conn = post(conn, group_group_path(conn, :join, group.id))
+      conn = post(conn, api_v1_group_group_path(conn, :join, group.id))
       assert json_response(conn, 401)["errors"] == @unauthorized_error_code
     end
   end
@@ -111,7 +111,7 @@ defmodule TravengerWeb.GroupControllerTest do
         description: "new description"
       }
 
-      conn = put(conn, group_path(conn, :update, group.id), params)
+      conn = put(conn, api_v1_group_path(conn, :update, group.id), params)
       %{assigns: %{group: updated_group}} = conn
 
       %{conn: conn, group: group, updated_group: updated_group, params: params}
@@ -129,7 +129,7 @@ defmodule TravengerWeb.GroupControllerTest do
 
     test "returns error if user is not authenticated", %{params: params, group: group} do
       conn = build_conn()
-      conn = put(conn, group_path(conn, :update, group.id), params)
+      conn = put(conn, api_v1_group_path(conn, :update, group.id), params)
       assert json_response(conn, 401)["errors"] == @unauthorized_error_code
     end
   end
@@ -144,7 +144,7 @@ defmodule TravengerWeb.GroupControllerTest do
 
       group = insert(:group)
       insert(:membership, group: group, user: user, role: :member)
-      conn = put(conn, group_path(conn, :update, group.id), params)
+      conn = put(conn, api_v1_group_path(conn, :update, group.id), params)
 
       %{conn: conn}
     end
@@ -159,7 +159,8 @@ defmodule TravengerWeb.GroupControllerTest do
       group = insert(:group)
       insert(:membership, user: user, group: group, role: :admin)
       params = %{user_id: insert(:user).id}
-      conn = post(conn, group_group_path(conn, :invite, group.id), params)
+      path = api_v1_group_group_path(conn, :invite, group.id)
+      conn = post(conn, path, params)
       %{assigns: %{membership: membership}} = conn
 
       %{
@@ -184,7 +185,8 @@ defmodule TravengerWeb.GroupControllerTest do
       params: params
     } do
       conn = build_conn()
-      conn = post(conn, group_group_path(conn, :invite, group.id), params)
+      path = api_v1_group_group_path(conn, :invite, group.id)
+      conn = post(conn, path, params)
       assert json_response(conn, 401)["errors"] == @unauthorized_error_code
     end
   end
@@ -195,7 +197,8 @@ defmodule TravengerWeb.GroupControllerTest do
       insert(:membership, user: user, group: group, role: :member)
 
       params = %{user_id: insert(:user).id}
-      conn = post(conn, group_group_path(conn, :invite, group.id), params)
+      path = api_v1_group_group_path(conn, :invite, group.id)
+      conn = post(conn, path, params)
 
       %{conn: conn}
     end

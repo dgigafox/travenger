@@ -1,4 +1,4 @@
-defmodule TravengerWeb.GroupController do
+defmodule TravengerWeb.Api.V1.GroupController do
   use TravengerWeb, :controller
 
   import Travenger.Helpers.Utils
@@ -7,7 +7,7 @@ defmodule TravengerWeb.GroupController do
   alias Travenger.Accounts.User
   alias Travenger.Groups
   alias Travenger.Groups.Group
-  alias TravengerWeb.MembershipView
+  alias TravengerWeb.Api.V1.MembershipView
 
   @require_auth_functions [:create, :join, :update, :invite]
   @require_admin_functions [:update, :invite]

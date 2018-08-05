@@ -20,22 +20,23 @@ defmodule TravengerWeb.Router do
     get("/", PageController, :index)
   end
 
-  scope "/user", TravengerWeb do
+  scope "/api", TravengerWeb.Api, as: :api do
     pipe_through(:api)
 
-    resources("/blogs", BlogController)
-    resources("/users", UserController)
+    scope "/v1", V1, as: :v1 do
+      resources("/blogs", BlogController)
+      resources("/users", UserController)
+      resources("/events", EventController)
 
-    resources("/groups", GroupController) do
-      post("/join", GroupController, :join)
-      post("/invite", GroupController, :invite)
+      resources("/groups", GroupController) do
+        post("/join", GroupController, :join)
+        post("/invite", GroupController, :invite)
 
-      resources("/memberships", MembershipController) do
-        put("/approve", MembershipController, :approve)
+        resources("/memberships", MembershipController) do
+          put("/approve", MembershipController, :approve)
+        end
       end
     end
-
-    resources("/events", EventController)
   end
 
   scope "/auth", TravengerWeb do
