@@ -181,5 +181,13 @@ defmodule Travenger.GroupsTest do
       refute groups == []
       assert Enum.all?(groups, fn group -> group.user_id == user.id end)
     end
+
+    test "filter by name", %{group: grp} do
+      params = %{name: grp.name}
+      %{entries: groups} = Groups.list_groups(params)
+
+      refute groups == []
+      assert Enum.all?(groups, fn group -> group.name == grp.name end)
+    end
   end
 end
