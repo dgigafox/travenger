@@ -1,4 +1,4 @@
-defmodule TravengerWeb.UserController do
+defmodule TravengerWeb.Api.V1.UserController do
   use TravengerWeb, :controller
 
   import Travenger.Helpers.Utils
@@ -6,7 +6,7 @@ defmodule TravengerWeb.UserController do
   alias Travenger.Accounts
   alias Travenger.Accounts.User
 
-  action_fallback TravengerWeb.FallbackController
+  action_fallback(TravengerWeb.FallbackController)
 
   def index(conn, params) do
     users = Accounts.list_users(params)

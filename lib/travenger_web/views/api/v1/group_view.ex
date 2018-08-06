@@ -1,4 +1,4 @@
-defmodule TravengerWeb.GroupView do
+defmodule TravengerWeb.Api.V1.GroupView do
   use TravengerWeb, :view
 
   alias __MODULE__

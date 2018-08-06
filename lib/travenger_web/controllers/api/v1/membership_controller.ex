@@ -1,11 +1,11 @@
-defmodule TravengerWeb.MembershipController do
+defmodule TravengerWeb.Api.V1.MembershipController do
   use TravengerWeb, :controller
 
   import Travenger.Helpers.Utils
 
   alias Travenger.Accounts.Membership
   alias Travenger.Groups
-  alias TravengerWeb.MembershipView
+  alias TravengerWeb.Api.V1.MembershipView
 
   plug(Travenger.Plugs.RequireAuth when action in [:approve])
   plug(Travenger.Plugs.CheckGroupAdmin when action in [:approve])

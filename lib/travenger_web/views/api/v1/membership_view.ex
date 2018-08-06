@@ -1,9 +1,9 @@
-defmodule TravengerWeb.MembershipView do
+defmodule TravengerWeb.Api.V1.MembershipView do
   use TravengerWeb, :view
 
   alias __MODULE__
 
-  alias TravengerWeb.{
+  alias TravengerWeb.Api.V1.{
     GroupView,
     MembershipStatusView,
     UserView

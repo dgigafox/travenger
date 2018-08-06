@@ -1,4 +1,4 @@
-defmodule TravengerWeb.UserView do
+defmodule TravengerWeb.Api.V1.UserView do
   use TravengerWeb, :view
 
   alias __MODULE__

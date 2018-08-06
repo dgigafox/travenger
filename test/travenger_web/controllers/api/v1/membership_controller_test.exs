@@ -1,4 +1,4 @@
-defmodule TravengerWeb.MembershipControllerTest do
+defmodule TravengerWeb.Api.V1.MembershipControllerTest do
   @moduledoc """
   Tests for Group Controller functions
   """
@@ -7,7 +7,7 @@ defmodule TravengerWeb.MembershipControllerTest do
   import Travenger.Factory
   import Travenger.TestHelpers
 
-  alias TravengerWeb.MembershipView
+  alias TravengerWeb.Api.V1.MembershipView
 
   @unauthorized_error_code [%{"status" => "401", "title" => "Unauthorized"}]
   @forbidden_error_code [%{"status" => "403", "title" => "Forbidden"}]
@@ -23,7 +23,15 @@ defmodule TravengerWeb.MembershipControllerTest do
       grp = insert(:group)
       insert(:membership, user: user, group: grp, role: :creator)
       m = insert(:membership, group: grp)
-      path = group_membership_membership_path(conn, :approve, grp.id, m.id)
+
+      path =
+        api_v1_group_membership_membership_path(
+          conn,
+          :approve,
+          grp.id,
+          m.id
+        )
+
       conn = put(conn, path)
       %{assigns: %{membership: membership}} = conn
 
@@ -40,7 +48,7 @@ defmodule TravengerWeb.MembershipControllerTest do
       membership: m
     } do
       conn = build_conn()
-      path = group_membership_membership_path(conn, :approve, g.id, m.id)
+      path = api_v1_group_membership_membership_path(conn, :approve, g.id, m.id)
       conn = put(conn, path)
       assert json_response(conn, 401)["errors"] == @unauthorized_error_code
     end
@@ -51,7 +59,15 @@ defmodule TravengerWeb.MembershipControllerTest do
       grp = insert(:group)
       insert(:membership, user: user, group: grp, role: :member)
       m = insert(:membership, group: grp)
-      path = group_membership_membership_path(conn, :approve, grp.id, m.id)
+
+      path =
+        api_v1_group_membership_membership_path(
+          conn,
+          :approve,
+          grp.id,
+          m.id
+        )
+
       conn = put(conn, path)
 
       %{conn: conn}

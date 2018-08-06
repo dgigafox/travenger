@@ -11,6 +11,7 @@ defmodule TravengerWeb.AuthController do
   }
 
   alias Travenger.Accounts
+  alias TravengerWeb.Api.V1.UserView
 
   plug(Ueberauth)
 
@@ -35,7 +36,7 @@ defmodule TravengerWeb.AuthController do
     with {:ok, user} <- Accounts.auth_or_register_user(params),
          {:ok, token} <- generate_auth_token(user) do
       conn
-      |> put_view(TravengerWeb.UserView)
+      |> put_view(UserView)
       |> render("token.json", token: token)
     end
   end

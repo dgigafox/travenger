@@ -1,4 +1,4 @@
-defmodule TravengerWeb.MembershipStatusView do
+defmodule TravengerWeb.Api.V1.MembershipStatusView do
   use TravengerWeb, :view
 
   alias __MODULE__
