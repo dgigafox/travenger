@@ -15,7 +15,8 @@ defmodule Travenger.Plugs.CheckGroupAdmin do
   def init(opts), do: opts
 
   def call(%{assigns: %{user: user}} = conn, _) do
-    string_keys_to_atom(conn.params)
+    conn.params
+    |> string_keys_to_atom()
     |> Map.put(:user_id, user.id)
     |> Groups.find_group_admin()
     |> case do

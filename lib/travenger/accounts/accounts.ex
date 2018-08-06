@@ -13,7 +13,9 @@ defmodule Travenger.Accounts do
   Authenticate or Register user via Facebook
   """
   def auth_or_register_user(%{email: email} = attrs) do
-    case find_user(%{email: email}) do
+    attrs
+    |> find_user()
+    |> case do
       nil -> %User{email: email}
       user -> user
     end
