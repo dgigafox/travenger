@@ -39,6 +39,24 @@ defmodule TravengerWeb.Api.V1.GroupControllerTest do
     end
   end
 
+  describe "index/2 with keyword" do
+    setup %{conn: conn} do
+      group = insert(:group, name: "Sample Travel Group")
+      insert_list(2, :group)
+      params = %{search: "sample"}
+      conn = get(conn, api_v1_group_path(conn, :index), params)
+      %{"data" => data} = json_response(conn, :ok)
+
+      %{data: data, group: group}
+    end
+
+    test "returns a list of groups", %{data: data, group: group} do
+      assert data["total_entries"] == 1
+      [head | _] = data["entries"]
+      assert head["name"] == group.name
+    end
+  end
+
   describe "show/2" do
     setup %{conn: conn} do
       group = insert(:group)
