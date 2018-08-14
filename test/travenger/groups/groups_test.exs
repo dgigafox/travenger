@@ -162,7 +162,7 @@ defmodule Travenger.GroupsTest do
 
   describe "list_groups/1" do
     setup %{user: user} do
-      group = insert(:group, user: user)
+      group = insert(:group, user: user, name: "Sample Travel Group")
       insert(:group)
 
       %{group: group}
@@ -188,6 +188,14 @@ defmodule Travenger.GroupsTest do
 
       refute groups == []
       assert Enum.all?(groups, fn group -> group.name == grp.name end)
+    end
+
+    test "filter by keyword", %{group: grp} do
+      params = %{search: "ple tra"}
+      %{entries: groups} = Groups.list_groups(params)
+
+      refute groups == []
+      assert Enum.any?(groups, fn group -> group.name == grp.name end)
     end
   end
 end
