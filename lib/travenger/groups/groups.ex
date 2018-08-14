@@ -32,6 +32,7 @@ defmodule Travenger.Groups do
   """
   def list_groups(params \\ %{}) do
     Group
+    |> where_keyword(params)
     |> where_name(params)
     |> where_user(params)
     |> Repo.paginate(params)

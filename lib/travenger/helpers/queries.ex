@@ -21,6 +21,12 @@ defmodule Travenger.Helpers.Queries do
 
   def where_name(query, _params), do: query
 
+  def where_keyword(query, %{search: search}) do
+    where(query, [q], ilike(q.name, ^"%#{search}%"))
+  end
+
+  def where_keyword(query, _), do: query
+
   def where_email(query, %{email: email}) do
     where(query, [q], q.email == ^email)
   end
