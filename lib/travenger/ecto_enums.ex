@@ -23,3 +23,16 @@ defenum(
   banned: 4,
   unbanned: 5
 )
+
+defenum(
+  InvitationStatusEnum,
+  pending: 0,
+  declined: 1,
+  accepted: 2
+)
+
+defenum(
+  InvitationTypeEnum,
+  group: 0,
+  event: 1
+)

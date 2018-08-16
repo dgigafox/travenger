@@ -84,4 +84,18 @@ defmodule Travenger.AccountsTest do
       assert total == 1
     end
   end
+
+  describe "create_group_invitation/2" do
+    test "returns an invitation" do
+      user = insert(:user)
+      group = insert(:group)
+      {:ok, invitation} = Accounts.create_group_invitation(user, group)
+
+      assert invitation.id
+      assert invitation.type == :group
+      assert invitation.status == :pending
+      assert invitation.user_id == user.id
+      assert invitation.group_id == group.id
+    end
+  end
 end

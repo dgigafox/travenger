@@ -7,6 +7,7 @@ defmodule Travenger.Groups.Group do
   import Ecto.Changeset
 
   alias Travenger.Accounts.{
+    Invitation,
     Membership,
     User
   }
@@ -24,6 +25,7 @@ defmodule Travenger.Groups.Group do
     belongs_to(:user, User)
     has_many(:members, Membership)
     has_many(:events, Event)
+    has_many(:invitations, Invitation)
     timestamps()
   end
 
