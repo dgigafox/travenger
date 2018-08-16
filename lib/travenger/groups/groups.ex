@@ -10,6 +10,7 @@ defmodule Travenger.Groups do
   alias Ecto.Multi
 
   alias Travenger.Accounts.{
+    Invitation,
     Membership,
     User
   }
@@ -179,12 +180,49 @@ defmodule Travenger.Groups do
   Invite a user to be a member of the group
   """
   def invite(%User{} = user, %Group{} = group) do
-    %Membership{
-      user: user,
-      group: group
-    }
-    |> Repo.preload([:membership_status])
-    |> Membership.invite_changeset()
-    |> Repo.insert()
+    Multi.new()
+    |> Multi.run(:group_invitation, &find_group_invitation(&1, user, group))
+    |> Multi.insert(
+      :membership_status,
+      %Membership{
+        user: user,
+        group: group
+      }
+      |> Repo.preload([:membership_status])
+      |> Membership.invite_changeset()
+    )
+    |> Multi.insert(
+      :invitation,
+      %Invitation{
+        user: user,
+        group: group,
+        type: :group
+      }
+      |> Invitation.changeset()
+    )
+    |> Repo.transaction()
+    |> case do
+      {:ok, %{membership_status: mstatus}} -> {:ok, mstatus}
+      {:error, _ops, ch, _c} -> {:error, ch}
+    end
+  end
+
+  def invite(_, %Group{}), do: {:error, "invalid user"}
+  def invite(%User{}, _), do: {:error, "invalid group"}
+  def invite(_, _), do: {:error, "invalid user and group"}
+
+  ###########################################################################
+  # => Private Functions
+  ###########################################################################
+  defp find_group_invitation(_, user, group) do
+    Invitation
+    |> where_user(%{user_id: user.id})
+    |> where_group(%{group_id: group.id})
+    |> last()
+    |> Repo.one()
+    |> case do
+      nil -> {:ok, "no existing invitation"}
+      invitation -> {:error, "has #{invitation.status} invitation"}
+    end
   end
 end
