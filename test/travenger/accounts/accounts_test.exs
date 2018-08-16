@@ -92,6 +92,10 @@ defmodule Travenger.AccountsTest do
       {:ok, invitation} = Accounts.create_group_invitation(user, group)
 
       assert invitation.id
+      assert invitation.type == :group
+      assert invitation.status == :pending
+      assert invitation.user_id == user.id
+      assert invitation.group_id == group.id
     end
   end
 end
