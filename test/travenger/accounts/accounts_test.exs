@@ -84,4 +84,61 @@ defmodule Travenger.AccountsTest do
       assert total == 1
     end
   end
+
+  describe "list_invitations/1" do
+    setup do
+      user = insert(:user)
+      group = insert(:group)
+
+      invitation =
+        insert(:invitation, %{
+          user: user,
+          group: group,
+          status: :pending
+        })
+
+      params = %{
+        group_id: group.id,
+        user_id: user.id,
+        type: invitation.type,
+        status: :pending
+      }
+
+      %{params: params}
+    end
+
+    test "returns a list of invitations" do
+      %{entries: entries} = Accounts.list_invitations()
+
+      refute entries == []
+    end
+
+    test "filter by user", %{params: params} do
+      %{entries: invitations} = Accounts.list_invitations(params)
+
+      refute invitations == []
+      assert Enum.all?(invitations, fn i -> i.user_id == params.user_id end)
+    end
+
+    test "filter by group", %{params: params} do
+      %{entries: invitations} = Accounts.list_invitations(params)
+
+      refute invitations == []
+      assert Enum.all?(invitations, fn i -> i.group_id == params.group_id end)
+    end
+
+    test "filter by type", %{params: params} do
+      %{entries: invitations} = Accounts.list_invitations(params)
+
+      refute invitations == []
+      assert Enum.all?(invitations, fn i -> i.type == params.type end)
+    end
+
+    test "filter by status", %{params: params} do
+      %{entries: invitations} = Accounts.list_invitations(params)
+
+      refute invitations == []
+      assert Enum.all?(invitations, fn i -> i.status == params.status end)
+    end
+  end
 end
