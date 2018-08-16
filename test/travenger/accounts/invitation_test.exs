@@ -14,6 +14,7 @@ defmodule Travenger.Accounts.InvitationTest do
     test "returns invalid when type is missing" do
       ch = Invitation.changeset(%Invitation{})
 
+      assert ch.errors[:user] == {"can't be blank", [validation: :required]}
       assert ch.errors[:type] == {"can't be blank", [validation: :required]}
     end
 

@@ -26,6 +26,7 @@ defmodule Travenger.Accounts.Invitation do
   def changeset(invitation, attrs \\ %{}) do
     invitation
     |> cast(attrs, @invitation_attrs)
+    |> cast_assoc(:user, required: true)
     |> validate_required(@invitation_attrs)
     |> validate_assoc()
   end
