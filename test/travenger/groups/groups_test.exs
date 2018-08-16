@@ -93,7 +93,7 @@ defmodule Travenger.GroupsTest do
       }
     end
 
-    test "returns a user group", %{membership: membership} do
+    test "returns a membership", %{membership: membership} do
       assert membership.id
       assert membership.user
       assert membership.group
@@ -133,17 +133,17 @@ defmodule Travenger.GroupsTest do
   end
 
   describe "invite/2 with invalid params" do
-    test "returns error with nil user" do
+    test "returns error with invalid user" do
       {:error, error} = Groups.invite(nil, insert(:group))
       assert error == "invalid user"
     end
 
-    test "returns error with nil group" do
+    test "returns error with invalid group" do
       {:error, error} = Groups.invite(insert(:user), nil)
       assert error == "invalid group"
     end
 
-    test "returns error when both user and group are nil" do
+    test "returns error when both user and group are invalid" do
       {:error, error} = Groups.invite(nil, nil)
       assert error == "invalid user and group"
     end

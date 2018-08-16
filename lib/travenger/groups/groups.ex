@@ -181,7 +181,7 @@ defmodule Travenger.Groups do
   """
   def invite(%User{} = user, %Group{} = group) do
     Multi.new()
-    |> Multi.run(:existing_invitation?, &existing_invitation?(&1, user, group))
+    |> Multi.run(:group_invitation, &find_group_invitation(&1, user, group))
     |> Multi.insert(
       :membership_status,
       %Membership{
@@ -214,7 +214,7 @@ defmodule Travenger.Groups do
   ###########################################################################
   # => Private Functions
   ###########################################################################
-  defp existing_invitation?(_, user, group) do
+  defp find_group_invitation(_, user, group) do
     Invitation
     |> where_user(%{user_id: user.id})
     |> where_group(%{group_id: group.id})
