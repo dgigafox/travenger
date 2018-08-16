@@ -1,8 +1,10 @@
 defmodule Travenger.GroupsTest do
   use Travenger.DataCase
 
+  import Ecto.Query
   import Travenger.Factory
 
+  alias Travenger.Accounts.Invitation
   alias Travenger.Groups
 
   setup do
@@ -84,7 +86,11 @@ defmodule Travenger.GroupsTest do
       group = insert(:group)
       {:ok, membership} = Groups.invite(user, group)
 
-      %{membership: membership}
+      %{
+        membership: membership,
+        group: group,
+        user: user
+      }
     end
 
     test "returns a user group", %{membership: membership} do
@@ -98,6 +104,48 @@ defmodule Travenger.GroupsTest do
       assert membership.membership_status
       assert membership.membership_status.status == :invited
       assert membership.membership_status.invited_at
+    end
+
+    test "creates an invitation", %{user: user, group: group} do
+      assert Invitation
+             |> where([i], i.user_id == ^user.id)
+             |> where([i], i.group_id == ^group.id)
+             |> where([i], i.type == ^:group)
+             |> where([i], i.status == ^:pending)
+             |> Repo.one()
+    end
+  end
+
+  describe "invite/2 with existing invitation" do
+    test "returns error", %{user: user} do
+      group = insert(:group)
+
+      invitation =
+        insert(:invitation, %{
+          user: user,
+          group: group,
+          status: :declined
+        })
+
+      {:error, error} = Groups.invite(user, group)
+      assert error == "has #{invitation.status} invitation"
+    end
+  end
+
+  describe "invite/2 with invalid params" do
+    test "returns error with nil user" do
+      {:error, error} = Groups.invite(nil, insert(:group))
+      assert error == "invalid user"
+    end
+
+    test "returns error with nil group" do
+      {:error, error} = Groups.invite(insert(:user), nil)
+      assert error == "invalid group"
+    end
+
+    test "returns error when both user and group are nil" do
+      {:error, error} = Groups.invite(nil, nil)
+      assert error == "invalid user and group"
     end
   end
 

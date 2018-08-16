@@ -6,9 +6,7 @@ defmodule Travenger.Accounts do
   import Ecto.Query, warn: false
   import Travenger.Helpers.Queries
 
-  alias Travenger.Accounts.Invitation
   alias Travenger.Accounts.User
-  alias Travenger.Groups.Group
   alias Travenger.Repo
 
   @doc """
@@ -63,14 +61,4 @@ defmodule Travenger.Accounts do
   end
 
   def get_user(id), do: Repo.get(User, id)
-
-  def create_group_invitation(%User{} = user, %Group{} = group) do
-    %Invitation{
-      user: user,
-      group: group,
-      type: :group
-    }
-    |> Invitation.changeset()
-    |> Repo.insert()
-  end
 end
