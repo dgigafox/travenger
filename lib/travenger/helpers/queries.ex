@@ -50,4 +50,16 @@ defmodule Travenger.Helpers.Queries do
   end
 
   def where_user(query, _params), do: query
+
+  def where_status(query, %{status: status}) do
+    where(query, [q], q.status == ^status)
+  end
+
+  def where_status(query, _params), do: query
+
+  def where_type(query, %{type: type}) do
+    where(query, [q], q.type == ^type)
+  end
+
+  def where_type(query, _params), do: query
 end

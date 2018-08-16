@@ -6,7 +6,11 @@ defmodule Travenger.Accounts do
   import Ecto.Query, warn: false
   import Travenger.Helpers.Queries
 
-  alias Travenger.Accounts.User
+  alias Travenger.Accounts.{
+    Invitation,
+    User
+  }
+
   alias Travenger.Repo
 
   @doc """
@@ -61,4 +65,13 @@ defmodule Travenger.Accounts do
   end
 
   def get_user(id), do: Repo.get(User, id)
+
+  def list_invitations(params \\ %{}) do
+    Invitation
+    |> where_user(params)
+    |> where_group(params)
+    |> where_type(params)
+    |> where_status(params)
+    |> Repo.paginate(params)
+  end
 end
