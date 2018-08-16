@@ -5,6 +5,7 @@ defmodule Travenger.Factory do
   use ExMachina.Ecto, repo: Travenger.Repo
 
   alias Travenger.Accounts.{
+    Invitation,
     Membership,
     User
   }
@@ -52,6 +53,14 @@ defmodule Travenger.Factory do
     %MembershipStatus{
       status: :pending,
       joined_at: DateTime.utc_now()
+    }
+  end
+
+  def invitation_factory do
+    %Invitation{
+      user: build(:user),
+      group: build(:group),
+      type: :group
     }
   end
 end
