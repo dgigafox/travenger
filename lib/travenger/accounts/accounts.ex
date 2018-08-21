@@ -68,10 +68,12 @@ defmodule Travenger.Accounts do
 
   def list_invitations(params \\ %{}) do
     Invitation
+    |> sort_by(params)
     |> where_user(params)
     |> where_group(params)
     |> where_type(params)
     |> where_status(params)
+    |> preload([:user, :group])
     |> Repo.paginate(params)
   end
 end
