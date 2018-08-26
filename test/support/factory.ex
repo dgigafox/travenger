@@ -60,7 +60,8 @@ defmodule Travenger.Factory do
     %Invitation{
       user: build(:user),
       group: build(:group),
-      type: :group
+      type: :group,
+      status: :pending
     }
   end
 end

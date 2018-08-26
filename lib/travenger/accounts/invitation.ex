@@ -31,6 +31,13 @@ defmodule Travenger.Accounts.Invitation do
     |> validate_assoc()
   end
 
+  def accept_changeset(invitation, attrs \\ %{}) do
+    invitation
+    |> cast(attrs, [:status])
+    |> validate_assoc()
+    |> put_change(:status, :accepted)
+  end
+
   defp validate_assoc(ch) do
     case get_field(ch, :type) do
       nil -> ch

@@ -6,10 +6,15 @@ defmodule Travenger.Accounts do
   import Ecto.Query, warn: false
   import Travenger.Helpers.Queries
 
+  alias Ecto.Multi
+
   alias Travenger.Accounts.{
     Invitation,
+    Membership,
     User
   }
+
+  alias Travenger.Groups.MembershipStatus
 
   alias Travenger.Repo
 
@@ -64,6 +69,13 @@ defmodule Travenger.Accounts do
     |> Repo.one()
   end
 
+  def find_membership(params) do
+    Membership
+    |> where_user(params)
+    |> where_group(params)
+    |> Repo.one()
+  end
+
   def get_user(id), do: Repo.get(User, id)
 
   def list_invitations(params \\ %{}) do
@@ -75,5 +87,60 @@ defmodule Travenger.Accounts do
     |> where_status(params)
     |> preload([:user, :group])
     |> Repo.paginate(params)
+  end
+
+  def accept_group_invitation(%Invitation{type: :group} = invitation) do
+    Multi.new()
+    |> Multi.update(:invitation, Invitation.accept_changeset(invitation))
+    |> Multi.run(:membership, &update_membership(&1))
+    |> Repo.transaction()
+    |> case do
+      {:ok, %{invitation: invitation}} -> {:ok, invitation}
+      {:error, _ops, ch, _c} -> {:error, ch}
+    end
+  end
+
+  def accept_group_invitation(_), do: {:error, "invalid invitation"}
+
+  ###########################################################################
+  # => Private Functions
+  ###########################################################################
+  defp update_membership(%{invitation: invitation}) do
+    with {:ok, user} <- get_assoc(invitation, :user),
+         {:ok, group} <- get_assoc(invitation, :group),
+         {:ok, membership} <- find_membership(user, group) do
+      membership
+      |> Repo.preload([:user, :group, :membership_status])
+      |> Membership.update_changeset(%{
+        role: :member,
+        membership_status: %{
+          status: :accepted,
+          accepted_at: DateTime.utc_now()
+        }
+      })
+      |> Repo.update()
+    end
+  end
+
+  defp find_membership(user, group) do
+    params = %{
+      user_id: user.id,
+      group_id: group.id
+    }
+
+    case find_membership(params) do
+      nil -> {:error, "no membership found"}
+      membership -> {:ok, membership}
+    end
+  end
+
+  defp get_assoc(struct, key) do
+    struct
+    |> Repo.preload([key])
+    |> Map.get(key)
+    |> case do
+      nil -> {:error, "no association found"}
+      assoc -> {:ok, assoc}
+    end
   end
 end
