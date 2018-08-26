@@ -22,7 +22,7 @@ defmodule Travenger.Accounts.Membership do
 
     belongs_to(:user, User)
     belongs_to(:group, Group)
-    has_one(:membership_status, MembershipStatus)
+    has_one(:membership_status, MembershipStatus, on_replace: :update)
     timestamps()
   end
 
@@ -40,6 +40,12 @@ defmodule Travenger.Accounts.Membership do
     |> changeset(attrs)
     |> no_assoc_constraint(:membership_status, message: @existing_assoc_error)
     |> put_membership_status()
+  end
+
+  def update_changeset(membership, attrs \\ %{}) do
+    membership
+    |> changeset(attrs)
+    |> cast_assoc(:membership_status, required: true)
   end
 
   def approve_changeset(membership) do

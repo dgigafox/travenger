@@ -2,7 +2,13 @@ defmodule Travenger.AccountsTest do
   use Travenger.DataCase
 
   import Travenger.Factory
+  import Travenger.Helpers.Queries
+
   alias Travenger.Accounts
+  alias Travenger.Accounts.Membership
+
+  @invalid_invitation_error "invalid invitation"
+  @no_membership_error "no membership found"
 
   describe "auth_or_register_users/1" do
     test "creates new user if user does not exist" do
@@ -17,6 +23,26 @@ defmodule Travenger.AccountsTest do
 
       assert updated_user
       assert user.id == updated_user.id
+    end
+  end
+
+  describe "find_membership/1" do
+    setup do
+      %{membership: insert(:membership)}
+    end
+
+    test "find membership by user_id", context do
+      user = get_assoc(context.membership, :user)
+      membership = Accounts.find_membership(%{user_id: user.id})
+
+      assert membership.id == context.membership.id
+    end
+
+    test "find membership by group_id", context do
+      group = get_assoc(context.membership, :group)
+      membership = Accounts.find_membership(%{group_id: group.id})
+
+      assert membership.id == context.membership.id
     end
   end
 
@@ -140,5 +166,79 @@ defmodule Travenger.AccountsTest do
       refute invitations == []
       assert Enum.all?(invitations, fn i -> i.status == params.status end)
     end
+  end
+
+  describe "accept_invitation" do
+    setup do
+      user = insert(:user)
+      group = insert(:group)
+
+      invitation =
+        insert(:invitation, %{
+          user: user,
+          group: group,
+          type: :group
+        })
+
+      insert(:membership, %{
+        user: user,
+        group: group,
+        membership_status: %{status: :invited}
+      })
+
+      {:ok, invitation} = Accounts.accept_group_invitation(invitation)
+
+      %{
+        user: user,
+        group: group,
+        invitation: invitation
+      }
+    end
+
+    test "should update invitation status to accepted", context do
+      assert context.invitation.status == :accepted
+    end
+
+    test "should update membership to role member", context do
+      membership =
+        Membership
+        |> where_user(%{user_id: context.user.id})
+        |> where_group(%{group_id: context.group.id})
+        |> Repo.one()
+
+      assert membership.role == :member
+    end
+
+    test "should update membership status to accepted", context do
+      membership_status =
+        Membership
+        |> where_user(%{user_id: context.user.id})
+        |> where_group(%{group_id: context.group.id})
+        |> Repo.one()
+        |> get_assoc(:membership_status)
+
+      assert membership_status.status == :accepted
+      assert membership_status.accepted_at
+    end
+
+    test "returns error if invitation is invalid" do
+      {:error, error} = Accounts.accept_group_invitation(nil)
+
+      assert error == @invalid_invitation_error
+    end
+  end
+
+  describe "accept_invitation when no membership is found" do
+    test "returns error" do
+      {:error, error} = Accounts.accept_group_invitation(insert(:invitation))
+
+      assert error == @no_membership_error
+    end
+  end
+
+  defp get_assoc(struct, key) do
+    struct
+    |> Repo.preload([key])
+    |> Map.get(key)
   end
 end
