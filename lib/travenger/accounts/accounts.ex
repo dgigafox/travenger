@@ -14,8 +14,6 @@ defmodule Travenger.Accounts do
     User
   }
 
-  alias Travenger.Groups.MembershipStatus
-
   alias Travenger.Repo
 
   @doc """
