@@ -30,6 +30,8 @@ defmodule TravengerWeb.Router do
         resources("/invitations", InvitationController)
       end
 
+      put("/invitations/:invitation_id/accept", InvitationController, :accept)
+
       resources("/events", EventController)
 
       resources("/groups", GroupController) do

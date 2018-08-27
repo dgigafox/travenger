@@ -168,7 +168,7 @@ defmodule Travenger.AccountsTest do
     end
   end
 
-  describe "accept_invitation" do
+  describe "accept_invitation/1 for group" do
     setup do
       user = insert(:user)
       group = insert(:group)
@@ -186,7 +186,7 @@ defmodule Travenger.AccountsTest do
         membership_status: %{status: :invited}
       })
 
-      {:ok, invitation} = Accounts.accept_group_invitation(invitation)
+      {:ok, invitation} = Accounts.accept_invitation(invitation)
 
       %{
         user: user,
@@ -222,15 +222,16 @@ defmodule Travenger.AccountsTest do
     end
 
     test "returns error if invitation is invalid" do
-      {:error, error} = Accounts.accept_group_invitation(nil)
+      {:error, error} = Accounts.accept_invitation(nil)
 
       assert error == @invalid_invitation_error
     end
   end
 
-  describe "accept_invitation when no membership is found" do
+  describe "accept_invitation for group when no membership is found" do
     test "returns error" do
-      {:error, error} = Accounts.accept_group_invitation(insert(:invitation))
+      invitation = insert(:invitation, %{type: :group})
+      {:error, error} = Accounts.accept_invitation(invitation)
 
       assert error == @no_membership_error
     end
