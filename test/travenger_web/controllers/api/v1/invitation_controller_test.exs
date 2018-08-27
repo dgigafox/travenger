@@ -20,13 +20,17 @@ defmodule TravengerWeb.Api.V1.InvitationControllerTest do
   end
 
   describe "index/2" do
-    test "returns a list of invitations of the current user", %{
-      conn: conn,
-      user: user
-    } do
-      insert(:invitation, user: user)
-      path = api_v1_user_invitation_path(conn, :index, user.id)
-      conn = get(conn, path, @page_fields)
+    setup %{conn: conn, user: user} do
+      insert(:invitation, user: user, type: :group)
+      insert(:invitation, user: insert(:user), type: :group)
+      insert(:invitation, user: user, type: :event)
+      path = api_v1_invitation_path(conn, :index)
+      conn = get(conn, path, Map.put(@page_fields, "type", "group"))
+
+      %{conn: conn}
+    end
+
+    test "returns a list of group invitations of the current user", %{conn: conn} do
       %{"data" => data} = json_response(conn, :ok)
 
       assert data["page_number"] == @page_fields["page_number"]
@@ -36,26 +40,12 @@ defmodule TravengerWeb.Api.V1.InvitationControllerTest do
       refute data["entries"] == []
     end
 
-    test "returns error if user is not authenticated", %{user: user} do
-      insert(:invitation, user: user)
+    test "returns error if user is not authenticated" do
       conn = build_conn()
-      path = api_v1_user_invitation_path(conn, :index, user.id)
-      conn = get(conn, path, @page_fields)
+      path = api_v1_invitation_path(conn, :index)
+      conn = get(conn, path, Map.put(@page_fields, "type", "group"))
 
       assert json_response(conn, 401)["errors"] == @unauthorized_error_code
-    end
-  end
-
-  describe "index/2 when accessing invitations of other user" do
-    test "returns error", %{
-      conn: conn,
-      user: user
-    } do
-      insert(:invitation, user: user)
-      path = api_v1_user_invitation_path(conn, :index, 99_999)
-      conn = get(conn, path, @page_fields)
-
-      assert json_response(conn, :not_found)["errors"] == @not_found_error_code
     end
   end
 
@@ -79,7 +69,8 @@ defmodule TravengerWeb.Api.V1.InvitationControllerTest do
     end
 
     test "returns an accepted invitation", %{conn: conn, invitation: invitation} do
-      conn = put(conn, api_v1_invitation_path(conn, :accept, invitation.id))
+      path = api_v1_invitation_invitation_path(conn, :accept, invitation.id)
+      conn = put(conn, path)
       %{assigns: %{invitation: invitation}} = conn
 
       assert json_response(conn, :ok) ==
@@ -91,14 +82,16 @@ defmodule TravengerWeb.Api.V1.InvitationControllerTest do
     test "returns 404 if user does not own the invitation", %{invitation: invitation} do
       user = insert(:user)
       conn = build_user_conn(user, &build_conn/0, &put_req_header/3)
-      conn = put(conn, api_v1_invitation_path(conn, :accept, invitation.id))
+      path = api_v1_invitation_invitation_path(conn, :accept, invitation.id)
+      conn = put(conn, path)
 
       assert json_response(conn, :not_found)["errors"] == @not_found_error_code
     end
 
     test "returns error if user is not authenticated", %{invitation: invitation} do
       conn = build_conn()
-      conn = put(conn, api_v1_invitation_path(conn, :accept, invitation.id))
+      path = api_v1_invitation_invitation_path(conn, :accept, invitation.id)
+      conn = put(conn, path)
 
       assert json_response(conn, :unauthorized)["errors"] == @unauthorized_error_code
     end

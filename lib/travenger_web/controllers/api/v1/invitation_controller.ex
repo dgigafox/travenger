@@ -8,10 +8,13 @@ defmodule TravengerWeb.Api.V1.InvitationController do
 
   action_fallback(TravengerWeb.FallbackController)
 
-  def index(conn, params) do
-    with {:ok} <- check_ownership(conn, params) do
-      render(conn, "index.json", invitations: Accounts.list_invitations(params))
-    end
+  def index(%{assigns: %{user: user}} = conn, params) do
+    params =
+      params
+      |> string_keys_to_atom()
+      |> Map.put(:user_id, user.id)
+
+    render(conn, "index.json", invitations: Accounts.list_invitations(params))
   end
 
   def accept(%{assigns: %{user: user}} = conn, params) do
@@ -32,13 +35,6 @@ defmodule TravengerWeb.Api.V1.InvitationController do
     case Accounts.find_invitation(params) do
       nil -> nil
       invitation -> {:ok, invitation}
-    end
-  end
-
-  defp check_ownership(%{assigns: %{user: user}}, %{"user_id" => uid}) do
-    case user.id == String.to_integer(uid) do
-      true -> {:ok}
-      _ -> nil
     end
   end
 end
