@@ -14,6 +14,10 @@ defmodule TravengerWeb.Api.V1.InvitationView do
     %{data: %{invitations | entries: entries}}
   end
 
+  def render("show.json", %{invitation: invitation}) do
+    %{data: render_one(invitation, InvitationView, "invitation.json")}
+  end
+
   def render("invitation.json", %{invitation: invitation}) do
     %{
       id: invitation.id,

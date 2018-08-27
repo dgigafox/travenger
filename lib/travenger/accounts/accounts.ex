@@ -67,6 +67,16 @@ defmodule Travenger.Accounts do
     |> Repo.one()
   end
 
+  def find_invitation(params) do
+    Invitation
+    |> where_id(params)
+    |> where_status(params)
+    |> where_type(params)
+    |> where_group(params)
+    |> where_user(params)
+    |> Repo.one()
+  end
+
   def find_membership(params) do
     Membership
     |> where_user(params)
@@ -87,7 +97,9 @@ defmodule Travenger.Accounts do
     |> Repo.paginate(params)
   end
 
-  def accept_group_invitation(%Invitation{type: :group} = invitation) do
+  def accept_invitation(%Invitation{type: :group} = invitation) do
+    invitation = Repo.preload(invitation, [:user, :group])
+
     Multi.new()
     |> Multi.update(:invitation, Invitation.accept_changeset(invitation))
     |> Multi.run(:membership, &update_membership(&1))
@@ -98,7 +110,7 @@ defmodule Travenger.Accounts do
     end
   end
 
-  def accept_group_invitation(_), do: {:error, "invalid invitation"}
+  def accept_invitation(_), do: {:error, "invalid invitation"}
 
   ###########################################################################
   # => Private Functions
