@@ -42,6 +42,7 @@ defmodule Travenger.Accounts do
   def list_users(attrs \\ %{}) do
     User
     |> where_gender(attrs)
+    |> where_keyword(attrs)
     |> Repo.paginate(attrs)
   end
 

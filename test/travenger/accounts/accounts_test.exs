@@ -109,6 +109,19 @@ defmodule Travenger.AccountsTest do
       refute list == []
       assert total == 1
     end
+
+    test "filter by keyword to search by name" do
+      name = "Darren Gegantino"
+      insert(:user, name: name)
+
+      %{entries: list, total_entries: total} =
+        Accounts.list_users(%{
+          search: "geg"
+        })
+
+      refute list == []
+      assert total == 1
+    end
   end
 
   describe "list_invitations/1" do
