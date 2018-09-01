@@ -32,6 +32,15 @@ defmodule TravengerWeb.Api.V1.UserControllerTest do
 
       assert data["total_entries"] == 1
     end
+
+    test "returns a paginated list of users given keyword", %{conn: conn} do
+      insert(:user, name: "Shirly Gegantino")
+      params = %{search: "geg"}
+      conn = get(conn, api_v1_user_path(conn, :index), params)
+      %{"data" => data} = json_response(conn, :ok)
+
+      assert data["total_entries"] == 2
+    end
   end
 
   describe "show/2" do
