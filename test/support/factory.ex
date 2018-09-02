@@ -5,6 +5,7 @@ defmodule Travenger.Factory do
   use ExMachina.Ecto, repo: Travenger.Repo
 
   alias Travenger.Accounts.{
+    Following,
     Invitation,
     Membership,
     User
@@ -62,6 +63,13 @@ defmodule Travenger.Factory do
       group: build(:group),
       type: :group,
       status: :pending
+    }
+  end
+
+  def following_factory do
+    %Following{
+      user: build(:user),
+      followed_user: build(:user)
     }
   end
 end
