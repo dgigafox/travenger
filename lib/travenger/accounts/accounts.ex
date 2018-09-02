@@ -9,6 +9,7 @@ defmodule Travenger.Accounts do
   alias Ecto.Multi
 
   alias Travenger.Accounts.{
+    Following,
     Invitation,
     Membership,
     User
@@ -112,6 +113,15 @@ defmodule Travenger.Accounts do
   end
 
   def accept_invitation(_), do: {:error, "invalid invitation"}
+
+  def follow_user(follower, followed_user) do
+    %Following{
+      user: follower,
+      followed_user: followed_user
+    }
+    |> Following.changeset()
+    |> Repo.insert()
+  end
 
   ###########################################################################
   # => Private Functions

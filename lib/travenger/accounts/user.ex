@@ -5,7 +5,10 @@ defmodule Travenger.Accounts.User do
   use Ecto.Schema
   import Ecto.Changeset
 
-  alias Travenger.Accounts.Membership
+  alias Travenger.Accounts.{
+    Following,
+    Membership
+  }
 
   alias Travenger.Posts.{
     Blog,
@@ -26,6 +29,8 @@ defmodule Travenger.Accounts.User do
     has_many(:groups, Membership)
     has_many(:events, Event)
     has_many(:blogs, Blog)
+    has_many(:followed_users, Following)
+    has_many(:followers, Following)
 
     timestamps()
   end
