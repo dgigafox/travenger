@@ -19,6 +19,7 @@ defmodule Travenger.Accounts.Following do
     |> cast(attrs, [:user_id])
     |> cast_assoc(:user, required: true)
     |> cast_assoc(:followed_user, required: true)
+    |> unique_constraint(:user_id_followed_user_id)
     |> assoc_constraint(:user)
     |> assoc_constraint(:followed_user)
   end

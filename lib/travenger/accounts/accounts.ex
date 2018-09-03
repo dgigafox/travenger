@@ -114,18 +114,34 @@ defmodule Travenger.Accounts do
 
   def accept_invitation(_), do: {:error, "invalid invitation"}
 
-  def follow_user(follower, followed_user) do
-    %Following{
-      user: follower,
-      followed_user: followed_user
-    }
-    |> Following.changeset()
-    |> Repo.insert()
+  def follow_user(
+        %User{id: uid} = follower,
+        %User{id: fuid} = followed_user
+      ) do
+    with {:ok} <- compare_user(uid, fuid) do
+      %Following{
+        user: follower,
+        followed_user: followed_user
+      }
+      |> Following.changeset()
+      |> Repo.insert()
+    end
   end
+
+  def follow_user(_, %User{}), do: {:error, "invalid follower"}
+  def follow_user(%User{}, _), do: {:error, "invalid followed user"}
+  def follow_user(_, _), do: {:error, "invalid params"}
 
   ###########################################################################
   # => Private Functions
   ###########################################################################
+  defp compare_user(follower_id, followed_user_id) do
+    case follower_id == followed_user_id do
+      true -> {:error, "followed user is the same with the follower"}
+      _ -> {:ok}
+    end
+  end
+
   defp update_membership(%{invitation: invitation}) do
     with {:ok, user} <- get_assoc(invitation, :user),
          {:ok, group} <- get_assoc(invitation, :group),

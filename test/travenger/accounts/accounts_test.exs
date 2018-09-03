@@ -9,8 +9,11 @@ defmodule Travenger.AccountsTest do
 
   @invalid_invitation_error "invalid invitation"
   @no_membership_error "no membership found"
-  @assoc_user_error [user: {"can't be blank", [validation: :required]}]
-  @assoc_followed_user_error [followed_user: {"can't be blank", [validation: :required]}]
+  @assoc_user_error "invalid follower"
+  @assoc_followed_user_error "invalid followed user"
+  @follow_user_params_error "invalid params"
+  @already_followed_error [user_id_followed_user_id: {"has already been taken", []}]
+  @same_user_error "followed user is the same with the follower"
 
   describe "auth_or_register_users/1" do
     test "creates new user if user does not exist" do
@@ -264,18 +267,34 @@ defmodule Travenger.AccountsTest do
       {:ok, following} = Accounts.follow_user(c.follower, c.followed_user)
 
       assert following.id
-      assert following.user.id == c.follower.id
-      assert following.followed_user.id == c.followed_user.id
+      assert following.user_id == c.follower.id
+      assert following.followed_user_id == c.followed_user.id
     end
 
     test "returns error when follower is nil", c do
-      {:error, ch} = Accounts.follow_user(nil, c.followed_user)
-      assert ch.errors == @assoc_user_error
+      {:error, error} = Accounts.follow_user(nil, c.followed_user)
+      assert error == @assoc_user_error
     end
 
     test "returns error when followed_user is nil", c do
-      {:error, ch} = Accounts.follow_user(c.follower, nil)
-      assert ch.errors == @assoc_followed_user_error
+      {:error, error} = Accounts.follow_user(c.follower, nil)
+      assert error == @assoc_followed_user_error
+    end
+
+    test "returns error when follower and followed user are nil" do
+      {:error, error} = Accounts.follow_user(nil, nil)
+      assert error == @follow_user_params_error
+    end
+
+    test "returns error when user already followed another user", c do
+      Accounts.follow_user(c.follower, c.followed_user)
+      {:error, ch} = Accounts.follow_user(c.follower, c.followed_user)
+      assert ch.errors == @already_followed_error
+    end
+
+    test "returns error when user follows himself", c do
+      {:error, error} = Accounts.follow_user(c.follower, c.follower)
+      assert error == @same_user_error
     end
   end
 
