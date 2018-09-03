@@ -9,6 +9,8 @@ defmodule Travenger.AccountsTest do
 
   @invalid_invitation_error "invalid invitation"
   @no_membership_error "no membership found"
+  @assoc_user_error [user: {"can't be blank", [validation: :required]}]
+  @assoc_followed_user_error [followed_user: {"can't be blank", [validation: :required]}]
 
   describe "auth_or_register_users/1" do
     test "creates new user if user does not exist" do
@@ -247,6 +249,33 @@ defmodule Travenger.AccountsTest do
       {:error, error} = Accounts.accept_invitation(invitation)
 
       assert error == @no_membership_error
+    end
+  end
+
+  describe "follow user" do
+    setup do
+      follower = insert(:user)
+      followed_user = insert(:user)
+
+      %{follower: follower, followed_user: followed_user}
+    end
+
+    test "returns following record", c do
+      {:ok, following} = Accounts.follow_user(c.follower, c.followed_user)
+
+      assert following.id
+      assert following.user.id == c.follower.id
+      assert following.followed_user.id == c.followed_user.id
+    end
+
+    test "returns error when follower is nil", c do
+      {:error, ch} = Accounts.follow_user(nil, c.followed_user)
+      assert ch.errors == @assoc_user_error
+    end
+
+    test "returns error when followed_user is nil", c do
+      {:error, ch} = Accounts.follow_user(c.follower, nil)
+      assert ch.errors == @assoc_followed_user_error
     end
   end
 
