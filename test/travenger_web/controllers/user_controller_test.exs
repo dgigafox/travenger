@@ -2,15 +2,16 @@ defmodule TravengerWeb.Api.V1.UserControllerTest do
   use TravengerWeb.ConnCase
 
   import Travenger.Factory
+  import Travenger.TestHelpers
 
+  alias TravengerWeb.Api.V1.FollowingView
   alias TravengerWeb.Api.V1.UserView
   alias TravengerWeb.ErrorView
 
   setup do
-    %{
-      conn: build_conn(),
-      user: insert(:user)
-    }
+    user = insert(:user)
+    conn = build_user_conn(user, &build_conn/0, &put_req_header/3)
+    %{conn: conn, user: user}
   end
 
   describe "index/2" do
@@ -71,6 +72,19 @@ defmodule TravengerWeb.Api.V1.UserControllerTest do
       conn = get(conn, api_v1_user_path(conn, :show, 10_000))
 
       assert json_response(conn, :not_found) == render_json(ErrorView, "404.json", [])
+    end
+  end
+
+  describe "follow/2" do
+    test "returns a following record with follower and followee", %{
+      conn: conn
+    } do
+      followee = insert(:user)
+      conn = post(conn, api_v1_user_user_path(conn, :follow, followee.id))
+      %{assigns: %{following: following}} = conn
+      expected = render_json(FollowingView, "show.json", %{following: following})
+
+      assert json_response(conn, :ok) == expected
     end
   end
 end

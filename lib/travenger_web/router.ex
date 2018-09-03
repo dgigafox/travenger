@@ -26,7 +26,9 @@ defmodule TravengerWeb.Router do
     scope "/v1", V1, as: :v1 do
       resources("/blogs", BlogController)
 
-      resources("/users", UserController)
+      resources("/users", UserController) do
+        post("/follow", UserController, :follow)
+      end
 
       resources("/invitations", InvitationController) do
         put("/accept", InvitationController, :accept)

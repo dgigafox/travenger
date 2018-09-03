@@ -5,6 +5,9 @@ defmodule TravengerWeb.Api.V1.UserController do
 
   alias Travenger.Accounts
   alias Travenger.Accounts.User
+  alias TravengerWeb.Api.V1.FollowingView
+
+  plug(Travenger.Plugs.RequireAuth when action in [:follow])
 
   action_fallback(TravengerWeb.FallbackController)
 
@@ -17,6 +20,25 @@ defmodule TravengerWeb.Api.V1.UserController do
     with params <- string_keys_to_atom(params),
          %User{} = user <- Accounts.find_user(params) do
       render(conn, "show.json", user: user)
+    end
+  end
+
+  def follow(%{assigns: %{user: user}} = conn, params) do
+    with params <- string_keys_to_atom(params),
+         {:ok, follower} <- get_user(user.id),
+         {:ok, followee} <- get_user(params.user_id),
+         {:ok, following} <- Accounts.follow_user(follower, followee) do
+      conn
+      |> put_status(:ok)
+      |> put_view(FollowingView)
+      |> render("show.json", following: following)
+    end
+  end
+
+  defp get_user(id) do
+    case Accounts.get_user(id) do
+      nil -> {:error, "invalid user id"}
+      user -> {:ok, user}
     end
   end
 end
