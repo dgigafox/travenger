@@ -9,3 +9,12 @@
 #
 # We recommend using the bang functions (`insert!`, `update!`
 # and so on) as they will fail if something goes wrong.
+"priv/repo/seeds"
+|> Path.join("**/*.exs")
+|> Path.wildcard()
+|> Enum.map(&Code.require_file/1)
+
+# Keep test environment declarative and keep out seeders from it
+if Mix.env() == :dev do
+  TravengerSeeder.seed()
+end
