@@ -36,3 +36,12 @@ defenum(
   group: 0,
   event: 1
 )
+
+defenum(
+  EntityActionEnum,
+  create: 0,
+  update: 1,
+  delete: 2,
+  send: 3,
+  comment: 4
+)
