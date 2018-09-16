@@ -12,7 +12,6 @@ defmodule Travenger.Notifications do
   alias Travenger.Groups.Group
 
   alias Travenger.Notifications.{
-    GroupNotification,
     Notification,
     NotificationChange,
     NotificationObject
@@ -20,13 +19,7 @@ defmodule Travenger.Notifications do
 
   def create_notification(entity, entity_action, user, notifiers) do
     Multi.new()
-    |> Multi.insert(
-      :notification_object,
-      NotificationObject.changeset(%NotificationObject{}, %{
-        entity_action: entity_action
-      })
-    )
-    |> Multi.run(:entity, &insert_entity(&1, entity))
+    |> Multi.run(:notification_object, &create_obj(&1, entity, entity_action))
     |> Multi.run(:notification_change, &insert_notification_change(&1, user))
     |> Multi.run(:notifications, &insert_notifications(&1, notifiers))
     |> Repo.transaction()
@@ -39,12 +32,12 @@ defmodule Travenger.Notifications do
     end
   end
 
-  defp insert_entity(attrs, %Group{} = entity) do
-    %GroupNotification{
-      group: entity,
-      notification_object: attrs.notification_object
+  defp create_obj(_, %Group{} = group, action) do
+    %NotificationObject{
+      entity_action: action,
+      entity: create_entity_map(group, :group)
     }
-    |> GroupNotification.changeset()
+    |> NotificationObject.changeset()
     |> Repo.insert()
   end
 
@@ -76,5 +69,12 @@ defmodule Travenger.Notifications do
     |> Map.put(:notification_object_id, notif_obj.id)
     |> Map.put(:inserted_at, DateTime.utc_now())
     |> Map.put(:updated_at, DateTime.utc_now())
+  end
+
+  defp create_entity_map(entity, object_type) do
+    Map.new()
+    |> Map.put(:object_id, entity.id)
+    |> Map.put(:name, entity.name)
+    |> Map.put(:object_type, object_type)
   end
 end

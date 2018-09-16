@@ -45,3 +45,10 @@ defenum(
   send: 3,
   comment: 4
 )
+
+defenum(
+  ObjectTypeEnum,
+  group: 0,
+  post: 1,
+  user: 2
+)
