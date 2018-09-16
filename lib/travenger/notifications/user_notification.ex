@@ -1,4 +1,7 @@
 defmodule Travenger.Notifications.UserNotification do
+  @moduledoc """
+  User Notification join-through table
+  """
   use Ecto.Schema
   import Ecto.Changeset
 

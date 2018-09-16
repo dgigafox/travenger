@@ -22,7 +22,9 @@ defmodule Travenger.Notifications do
     Multi.new()
     |> Multi.insert(
       :notification_object,
-      NotificationObject.changeset(%NotificationObject{}, %{entity_action: entity_action})
+      NotificationObject.changeset(%NotificationObject{}, %{
+        entity_action: entity_action
+      })
     )
     |> Multi.run(:entity, &insert_entity(&1, entity))
     |> Multi.run(:notification_change, &insert_notification_change(&1, user))
@@ -56,7 +58,11 @@ defmodule Travenger.Notifications do
   end
 
   defp insert_notifications(attrs, notifiers) do
-    entries = Enum.map(notifiers, &insert_notification(&1, attrs.notification_object))
+    entries =
+      Enum.map(
+        notifiers,
+        &insert_notification(&1, attrs.notification_object)
+      )
 
     {:ok,
      Notification

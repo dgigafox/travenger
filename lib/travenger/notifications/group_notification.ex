@@ -1,4 +1,7 @@
 defmodule Travenger.Notifications.GroupNotification do
+  @moduledoc """
+  Group Notification join-through schema
+  """
   use Ecto.Schema
   import Ecto.Changeset
 

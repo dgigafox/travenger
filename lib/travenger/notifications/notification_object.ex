@@ -1,4 +1,7 @@
 defmodule Travenger.Notifications.NotificationObject do
+  @moduledoc """
+  Notification object schema
+  """
   use Ecto.Schema
   import Ecto.Changeset
 
