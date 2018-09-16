@@ -57,4 +57,28 @@ defmodule Travenger.NotificationsTest do
       assert Enum.any?(notifications, &(Map.get(&1, :notifier_id) in ids))
     end
   end
+
+  describe "list_notifications" do
+    setup do
+      user = insert(:user)
+      notif = insert(:notification, notifier: user)
+
+      %{notif: notif, user: user}
+    end
+
+    test "returns a list of notifications" do
+      %{entries: entries} = Notifications.list_notifications()
+
+      refute entries == []
+    end
+
+    test "filter by notifier id", c do
+      %{entries: entries} =
+        Notifications.list_notifications(%{
+          notifier_id: c.user.id
+        })
+
+      assert Enum.any?(entries, &(Map.get(&1, :notifier_id) == c.user.id))
+    end
+  end
 end

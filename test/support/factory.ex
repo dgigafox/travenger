@@ -16,6 +16,11 @@ defmodule Travenger.Factory do
     MembershipStatus
   }
 
+  alias Travenger.Notifications.{
+    Notification,
+    NotificationObject
+  }
+
   def user_factory do
     email = sequence(:email, &"email-#{&1}@example.com")
 
@@ -70,6 +75,23 @@ defmodule Travenger.Factory do
     %Following{
       user: build(:user),
       followed_user: build(:user)
+    }
+  end
+
+  def notification_object_factory do
+    %NotificationObject{
+      entity_action: :create,
+      entity: %{
+        object_type: :group,
+        name: sequence("TravelGroup")
+      }
+    }
+  end
+
+  def notification_factory do
+    %Notification{
+      notifier: build(:user),
+      notification_object: build(:notification_object)
     }
   end
 end

@@ -4,6 +4,7 @@ defmodule Travenger.Notifications do
   """
 
   import Ecto.Query, warn: false
+  import Travenger.Helpers.Queries.Notification
 
   alias Ecto.Multi
   alias Travenger.Repo
@@ -16,6 +17,13 @@ defmodule Travenger.Notifications do
     NotificationChange,
     NotificationObject
   }
+
+  def list_notifications(params \\ %{}) do
+    Notification
+    |> preload([n], notification_object: [:notification_change, :notifications])
+    |> where_notifier(params)
+    |> Repo.paginate(params)
+  end
 
   def create_notification(entity, entity_action, user, notifiers) do
     Multi.new()
