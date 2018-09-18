@@ -11,6 +11,13 @@ defmodule Travenger.Notifications.NotificationObject do
     NotificationChange
   }
 
+  @derive {Poison.Encoder,
+           only: [
+             :entity,
+             :entity_action,
+             :notification_change
+           ]}
+
   schema "notification_objects" do
     field(:entity_action, EntityActionEnum)
 

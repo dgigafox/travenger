@@ -18,6 +18,7 @@ defmodule Travenger.Factory do
 
   alias Travenger.Notifications.{
     Notification,
+    NotificationChange,
     NotificationObject
   }
 
@@ -78,13 +79,21 @@ defmodule Travenger.Factory do
     }
   end
 
+  def notification_change_factory do
+    %NotificationChange{
+      actor: build(:user)
+    }
+  end
+
   def notification_object_factory do
     %NotificationObject{
       entity_action: :create,
       entity: %{
+        object_id: 1,
         object_type: :group,
         name: sequence("TravelGroup")
-      }
+      },
+      notification_change: build(:notification_change)
     }
   end
 

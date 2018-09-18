@@ -4,8 +4,15 @@ defmodule TravengerWeb.NotificationChannel do
   """
   use TravengerWeb, :channel
 
-  def join("notifications:" <> id, _params, socket) do
-    verify_user(id, socket)
+  alias Travenger.Notifications
+
+  def join("notifications:" <> id, params, socket) do
+    params = Map.put(params, :notifier_id, id)
+
+    with {:ok, socket} <- verify_user(id, socket),
+         %{entries: notifs} <- Notifications.list_notifications(params) do
+      {:ok, %{notifications: notifs}, socket}
+    end
   end
 
   defp verify_user(id, socket) do

@@ -8,6 +8,8 @@ defmodule Travenger.Notifications.NotificationChange do
   alias Travenger.Accounts.User
   alias Travenger.Notifications.NotificationObject
 
+  @derive {Poison.Encoder, only: [:actor]}
+
   schema "notification_changes" do
     belongs_to(:notification_object, NotificationObject)
     belongs_to(:actor, User)

@@ -20,7 +20,13 @@ defmodule Travenger.Notifications do
 
   def list_notifications(params \\ %{}) do
     Notification
-    |> preload([n], notification_object: [:notification_change, :notifications])
+    |> preload(
+      [n],
+      notification_object: [
+        :notifications,
+        notification_change: [:actor]
+      ]
+    )
     |> where_notifier(params)
     |> Repo.paginate(params)
   end

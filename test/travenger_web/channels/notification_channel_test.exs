@@ -13,17 +13,24 @@ defmodule TravengerWeb.NotificationChannelTest do
   describe "connection to socket" do
     setup do
       user = insert(:user)
+      insert(:notification, notifier: user)
 
-      {:ok, _params, socket} =
+      {:ok, params, socket} =
         socket("", %{user: user})
         |> subscribe_and_join(NotificationChannel, "notifications:#{user.id}")
 
-      %{socket: socket}
+      %{params: params, socket: socket, user: user}
     end
 
     test "returns a socket", c do
       assert c.socket
       leave(c.socket)
+    end
+
+    test "returns a list of notifications", c do
+      %{notifications: notifs} = c.params
+      refute notifs == []
+      assert Enum.all?(notifs, &(Map.get(&1, :notifier_id) == c.user.id))
     end
   end
 
