@@ -1,8 +1,12 @@
 defmodule TravengerWeb.UserSocket do
   use Phoenix.Socket
 
+  import Travenger.Guardian
+  alias TravengerWeb.NotificationChannel
+
   ## Channels
   # channel "room:*", TravengerWeb.RoomChannel
+  channel("notifications:*", NotificationChannel)
 
   ## Transports
   transport(:websocket, Phoenix.Transports.WebSocket)
@@ -19,8 +23,12 @@ defmodule TravengerWeb.UserSocket do
   #
   # See `Phoenix.Token` documentation for examples in
   # performing token verification on connect.
-  def connect(_params, socket) do
-    {:ok, socket}
+  def connect(%{"token" => token}, socket) do
+    with {:ok, res, %{"auth" => 1}} <- resource_from_token(token) do
+      {:ok, assign(socket, :user, res)}
+    else
+      _ -> {:error, "error connecting to socket"}
+    end
   end
 
   # Socket id's are topics that allow you to identify

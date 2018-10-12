@@ -15,6 +15,8 @@ defmodule Travenger.Accounts.User do
     Event
   }
 
+  @derive {Poison.Encoder, only: [:name]}
+
   schema "users" do
     field(:email, :string)
     field(:provider, :string)
