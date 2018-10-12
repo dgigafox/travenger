@@ -5,6 +5,7 @@ defmodule Travenger.Notifications do
 
   import Ecto.Query, warn: false
   import Travenger.Helpers.Queries.Notification
+  import TravengerWeb.Endpoint
 
   alias Ecto.Multi
   alias Travenger.Repo
@@ -36,6 +37,7 @@ defmodule Travenger.Notifications do
     |> Multi.run(:notification_object, &create_obj(&1, entity, entity_action))
     |> Multi.run(:notification_change, &insert_notification_change(&1, user))
     |> Multi.run(:notifications, &insert_notifications(&1, notifiers))
+    |> Multi.run(:sent_notifications, &send_notifications(&1))
     |> Repo.transaction()
     |> case do
       {:error, _ops, val, _ch} ->
@@ -44,6 +46,24 @@ defmodule Travenger.Notifications do
       {:ok, %{notification_object: obj}} ->
         {:ok, obj}
     end
+  end
+
+  defp send_notifications(%{notifications: notifications}) do
+    notifications
+    |> Enum.map(&Repo.preload(&1, notification_object: [notification_change: [:actor]]))
+    |> send_notification()
+
+    {:ok, notifications}
+  end
+
+  defp send_notification([]), do: :ok
+
+  defp send_notification([notification | notifications]) do
+    Task.start(fn ->
+      broadcast("notifications:#{notification.notifier_id}", "new", %{notification: notification})
+    end)
+
+    send_notification(notifications)
   end
 
   defp create_obj(_, %Group{} = group, action) do

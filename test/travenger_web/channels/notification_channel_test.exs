@@ -6,6 +6,7 @@ defmodule TravengerWeb.NotificationChannelTest do
 
   import Travenger.Factory
 
+  alias Travenger.Notifications
   alias TravengerWeb.NotificationChannel
 
   @unauthorized_error "User unauthorized"
@@ -31,6 +32,26 @@ defmodule TravengerWeb.NotificationChannelTest do
       %{notifications: notifs} = c.params
       refute notifs == []
       assert Enum.all?(notifs, &(Map.get(&1, :notifier_id) == c.user.id))
+      leave(c.socket)
+    end
+
+    test "broadcasts are pushed to the client", c do
+      entity = insert(:group)
+
+      notifiers = [c.user]
+
+      user = insert(:user)
+      entity_action = :create
+
+      {:ok, _notif_obj} =
+        Notifications.create_notification(
+          entity,
+          entity_action,
+          user,
+          notifiers
+        )
+
+      assert_broadcast("new", %{notification: _notification})
     end
   end
 
