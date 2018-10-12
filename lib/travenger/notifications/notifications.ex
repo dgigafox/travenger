@@ -50,7 +50,12 @@ defmodule Travenger.Notifications do
 
   defp send_notifications(%{notifications: notifications}) do
     notifications
-    |> Enum.map(&Repo.preload(&1, notification_object: [notification_change: [:actor]]))
+    |> Enum.map(
+      &Repo.preload(
+        &1,
+        notification_object: [notification_change: [:actor]]
+      )
+    )
     |> send_notification()
 
     {:ok, notifications}
