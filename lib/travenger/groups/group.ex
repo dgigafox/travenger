@@ -22,6 +22,8 @@ defmodule Travenger.Groups.Group do
     field(:image_url, :string)
     field(:description, :string)
 
+    field(:deleted_at, :naive_datetime)
+
     belongs_to(:user, User)
     has_many(:members, Membership)
     has_many(:events, Event)
