@@ -54,7 +54,10 @@ defmodule Travenger.Mixfile do
       {:excoveralls, "~> 0.8", only: :test},
       {:ex_machina, "~> 2.1"},
       {:mock, "~> 0.3.1", only: :test},
-      {:credo, "~> 0.9.0-rc1", only: [:dev, :test], runtime: false}
+      {:credo, "~> 0.9.0-rc1", only: [:dev, :test], runtime: false},
+
+      # Documentation
+      {:ex_doc, "~> 0.18.0", only: :dev, runtime: false}
     ]
   end
 
