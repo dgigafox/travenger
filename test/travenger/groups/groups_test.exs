@@ -246,4 +246,14 @@ defmodule Travenger.GroupsTest do
       assert Enum.any?(groups, fn group -> group.name == grp.name end)
     end
   end
+
+  describe "delete_group/1" do
+    test "updates deleted_at" do
+      group = insert(:group)
+      {:ok, group} = Groups.delete_group(group)
+
+      assert group.id
+      refute is_nil(group.deleted_at)
+    end
+  end
 end

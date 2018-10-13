@@ -46,6 +46,12 @@ defmodule Travenger.Groups.Group do
     |> cast(attrs, @group_attrs)
   end
 
+  def delete_changeset(group, attrs \\ %{}) do
+    group
+    |> cast(attrs, [])
+    |> put_change(:deleted_at, DateTime.utc_now())
+  end
+
   defp put_member(ch) do
     put_assoc(ch, :members, [
       %Membership{
