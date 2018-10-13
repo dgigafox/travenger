@@ -35,4 +35,13 @@ defmodule Travenger.Groups.GroupTest do
       assert ch.valid?
     end
   end
+
+  describe "delete_changeset/2" do
+    test "returns a valid changeset" do
+      ch = Group.delete_changeset(build(:group))
+
+      assert ch.valid?
+      assert ch.changes[:deleted_at]
+    end
+  end
 end
