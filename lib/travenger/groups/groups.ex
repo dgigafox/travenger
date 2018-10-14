@@ -36,6 +36,7 @@ defmodule Travenger.Groups do
     |> where_keyword(params)
     |> where_name(params)
     |> where_user(params)
+    |> where_not_deleted(params)
     |> Repo.paginate(params)
   end
 
@@ -71,7 +72,14 @@ defmodule Travenger.Groups do
       ** (Ecto.NoResultsError)
 
   """
-  def get_group(id), do: Repo.get(Group, id)
+  def get_group(id) do
+    params = %{id: id}
+
+    Group
+    |> where_id(params)
+    |> where_not_deleted(params)
+    |> Repo.one()
+  end
 
   @doc """
   Creates a group.

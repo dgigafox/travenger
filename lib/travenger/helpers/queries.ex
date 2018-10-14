@@ -62,4 +62,8 @@ defmodule Travenger.Helpers.Queries do
   end
 
   def where_type(query, _params), do: query
+
+  def where_not_deleted(query, _) do
+    where(query, [q], is_nil(q.deleted_at))
+  end
 end
