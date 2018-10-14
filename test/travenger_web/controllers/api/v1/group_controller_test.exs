@@ -7,6 +7,8 @@ defmodule TravengerWeb.Api.V1.GroupControllerTest do
   import Travenger.Factory
   import Travenger.TestHelpers
 
+  alias Travenger.Groups.Group
+  alias Travenger.Repo
   alias TravengerWeb.Api.V1.GroupView
   alias TravengerWeb.Api.V1.MembershipView
 
@@ -217,6 +219,51 @@ defmodule TravengerWeb.Api.V1.GroupControllerTest do
       params = %{user_id: insert(:user).id}
       path = api_v1_group_group_path(conn, :invite, group.id)
       conn = post(conn, path, params)
+
+      %{conn: conn}
+    end
+
+    test "returns error", %{conn: conn} do
+      assert json_response(conn, 403)["errors"] == @forbidden_error_code
+    end
+  end
+
+  describe "delete/2" do
+    setup %{conn: conn, user: user} do
+      group = insert(:group)
+      insert(:membership, user: user, group: group, role: :creator)
+      path = api_v1_group_path(conn, :delete, group.id)
+      conn = delete(conn, path)
+      %{assigns: %{group: group}} = conn
+
+      %{
+        conn: conn,
+        group: group
+      }
+    end
+
+    test "returns a group with updated deleted_at", c do
+      expected = render_json(GroupView, "show.json", %{group: c.group})
+      group = Repo.get(Group, c.group.id)
+
+      assert group.deleted_at
+      assert json_response(c.conn, 204) == expected
+    end
+
+    test "returns error when user is not authenticated", c do
+      conn = build_conn()
+      path = api_v1_group_path(conn, :delete, c.group.id)
+      conn = put(conn, path)
+      assert json_response(conn, 401)["errors"] == @unauthorized_error_code
+    end
+  end
+
+  describe "delete/2 when user is not the creator of the group" do
+    setup %{conn: conn, user: user} do
+      group = insert(:group)
+      insert(:membership, user: user, group: group, role: :admin)
+      path = api_v1_group_path(conn, :delete, group.id)
+      conn = delete(conn, path)
 
       %{conn: conn}
     end

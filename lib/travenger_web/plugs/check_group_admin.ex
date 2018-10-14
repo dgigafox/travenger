@@ -1,6 +1,7 @@
 defmodule Travenger.Plugs.CheckGroupAdmin do
   @moduledoc """
-  Plug for checking if the current user is authorized to access the group
+  Plug for checking if the current user is authorized to access the group.
+  If no options are passed, the default roles to be checked are admin and creator.
   """
 
   @behaviour Plug

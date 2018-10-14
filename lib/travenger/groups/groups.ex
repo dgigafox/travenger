@@ -5,7 +5,6 @@ defmodule Travenger.Groups do
 
   import Ecto.Query, warn: false
   import Travenger.Helpers.Queries
-  import Travenger.Helpers.Queries.Membership
 
   alias Ecto.Multi
 
@@ -163,24 +162,6 @@ defmodule Travenger.Groups do
     end
   end
 
-  defp update_membership_status(%{membership_status: mstatus}, membership) do
-    membership
-    |> Map.put(:membership_status, mstatus)
-    |> Membership.approve_changeset()
-    |> Repo.update()
-  end
-
-  @doc """
-  Find admin
-  """
-  def find_group_admin(params) do
-    Membership
-    |> where_group(params)
-    |> where_user(params)
-    |> where_admin(params)
-    |> Repo.one()
-  end
-
   @doc """
   Get membership via id
   """
@@ -224,6 +205,13 @@ defmodule Travenger.Groups do
   ###########################################################################
   # => Private Functions
   ###########################################################################
+  defp update_membership_status(%{membership_status: mstatus}, membership) do
+    membership
+    |> Map.put(:membership_status, mstatus)
+    |> Membership.approve_changeset()
+    |> Repo.update()
+  end
+
   defp find_group_invitation(_, user, group) do
     Invitation
     |> where_user(%{user_id: user.id})
