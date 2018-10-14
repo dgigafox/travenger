@@ -22,6 +22,8 @@ defmodule Travenger.Groups.Group do
     field(:image_url, :string)
     field(:description, :string)
 
+    field(:deleted_at, :naive_datetime)
+
     belongs_to(:user, User)
     has_many(:members, Membership)
     has_many(:events, Event)
@@ -42,6 +44,12 @@ defmodule Travenger.Groups.Group do
   def update_changeset(group, attrs) do
     group
     |> cast(attrs, @group_attrs)
+  end
+
+  def delete_changeset(group, attrs \\ %{}) do
+    group
+    |> cast(attrs, [])
+    |> put_change(:deleted_at, DateTime.utc_now())
   end
 
   defp put_member(ch) do

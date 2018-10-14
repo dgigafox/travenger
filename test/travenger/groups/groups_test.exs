@@ -211,6 +211,7 @@ defmodule Travenger.GroupsTest do
   describe "list_groups/1" do
     setup %{user: user} do
       group = insert(:group, user: user, name: "Sample Travel Group")
+      insert(:group, deleted_at: DateTime.utc_now())
       insert(:group)
 
       %{group: group}
@@ -220,6 +221,12 @@ defmodule Travenger.GroupsTest do
       %{total_entries: total} = Groups.list_groups()
 
       assert total == 2
+    end
+
+    test "list all groups excluding deleted_at" do
+      %{entries: entries} = Groups.list_groups()
+
+      assert Enum.all?(entries, &is_nil(&1.deleted_at))
     end
 
     test "filter by creator", %{user: user} do
@@ -244,6 +251,28 @@ defmodule Travenger.GroupsTest do
 
       refute groups == []
       assert Enum.any?(groups, fn group -> group.name == grp.name end)
+    end
+  end
+
+  describe "delete_group/1" do
+    test "updates deleted_at" do
+      group = insert(:group)
+      {:ok, group} = Groups.delete_group(group)
+
+      assert group.id
+      refute is_nil(group.deleted_at)
+    end
+  end
+
+  describe "get_group/1" do
+    test "returns a group" do
+      group = insert(:group)
+      assert Groups.get_group(group.id)
+    end
+
+    test "does not return deleted group" do
+      group = insert(:group, deleted_at: DateTime.utc_now())
+      refute Groups.get_group(group.id)
     end
   end
 end

@@ -36,7 +36,26 @@ defmodule Travenger.Groups do
     |> where_keyword(params)
     |> where_name(params)
     |> where_user(params)
+    |> where_not_deleted(params)
     |> Repo.paginate(params)
+  end
+
+  @doc """
+  Deletes a Group. Updates deleted_at.
+
+  ## Examples
+
+      iex> delete_group(group)
+      {:ok, %Group{}}
+
+      iex> delete_group(group)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def delete_group(%Group{} = group) do
+    group
+    |> Group.delete_changeset()
+    |> Repo.update()
   end
 
   @doc """
@@ -53,7 +72,14 @@ defmodule Travenger.Groups do
       ** (Ecto.NoResultsError)
 
   """
-  def get_group(id), do: Repo.get(Group, id)
+  def get_group(id) do
+    params = %{id: id}
+
+    Group
+    |> where_id(params)
+    |> where_not_deleted(params)
+    |> Repo.one()
+  end
 
   @doc """
   Creates a group.
@@ -83,22 +109,6 @@ defmodule Travenger.Groups do
     group
     |> Group.update_changeset(attrs)
     |> Repo.update()
-  end
-
-  @doc """
-  Deletes a Group.
-
-  ## Examples
-
-      iex> delete_group(group)
-      {:ok, %Group{}}
-
-      iex> delete_group(group)
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def delete_group(%Group{} = group) do
-    Repo.delete(group)
   end
 
   @doc """
