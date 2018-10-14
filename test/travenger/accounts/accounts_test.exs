@@ -49,6 +49,15 @@ defmodule Travenger.AccountsTest do
 
       assert membership.id == context.membership.id
     end
+
+    test "find membership by roles", context do
+      membership =
+        Accounts.find_membership(%{
+          roles: [context.membership.role]
+        })
+
+      assert membership.role == context.membership.role
+    end
   end
 
   describe "find_user/1" do

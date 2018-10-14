@@ -7,12 +7,23 @@ defmodule TravengerWeb.Api.V1.GroupController do
   alias Travenger.Accounts.User
   alias Travenger.Groups
   alias Travenger.Groups.Group
-  alias TravengerWeb.Api.V1.MembershipView
 
-  @require_auth_functions [:create, :join, :update, :invite]
-  @require_admin_functions [:update, :invite]
+  alias TravengerWeb.Api.V1.{
+    GroupView,
+    MembershipView
+  }
+
+  @require_auth_functions ~w(create join update invite delete)a
+  @require_admin_functions ~w(invite update)a
+  @require_creator_functions ~w(delete)a
 
   plug(Travenger.Plugs.RequireAuth when action in @require_auth_functions)
+
+  plug(
+    Travenger.Plugs.CheckGroupAdmin,
+    [:creator] when action in @require_creator_functions
+  )
+
   plug(Travenger.Plugs.CheckGroupAdmin when action in @require_admin_functions)
 
   def index(conn, params \\ %{}) do
@@ -59,6 +70,16 @@ defmodule TravengerWeb.Api.V1.GroupController do
       |> put_status(:ok)
       |> put_view(MembershipView)
       |> render("show.json", membership: membership)
+    end
+  end
+
+  def delete(conn, %{"id" => gid}) do
+    with %Group{} = group <- Groups.get_group(gid),
+         {:ok, group} <- Groups.delete_group(group) do
+      conn
+      |> put_status(:no_content)
+      |> put_view(GroupView)
+      |> render("show.json", group: group)
     end
   end
 end

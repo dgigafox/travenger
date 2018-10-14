@@ -5,6 +5,7 @@ defmodule Travenger.Accounts do
 
   import Ecto.Query, warn: false
   import Travenger.Helpers.Queries
+  import Travenger.Helpers.Queries.Membership
 
   alias Ecto.Multi
 
@@ -83,6 +84,7 @@ defmodule Travenger.Accounts do
     Membership
     |> where_user(params)
     |> where_group(params)
+    |> where_roles(params)
     |> Repo.one()
   end
 
