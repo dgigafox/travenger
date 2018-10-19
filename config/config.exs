@@ -26,13 +26,13 @@ config :cors_plug,
   max_age: 86_400
 
 # Ueberauth Config
+# default_scope: "email,public_profile"
 config :ueberauth, Ueberauth,
   providers: [
     facebook:
       {Ueberauth.Strategy.Facebook,
        [
-         profile_fields: "id,email,name,first_name,last_name,gender,location",
-         default_scope: "email,public_profile"
+         profile_fields: "id,email,name,first_name,last_name,gender,location"
        ]}
   ]
 
