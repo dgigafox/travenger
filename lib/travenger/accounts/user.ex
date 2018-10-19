@@ -39,11 +39,12 @@ defmodule Travenger.Accounts.User do
 
   @user_attrs ~w(email provider token name image_url first_name last_name
                 gender)a
+  @required_attrs @user_attrs -- ~w(provider token gender)a
 
   @doc false
   def changeset(user, attrs \\ %{}) do
     user
     |> cast(attrs, @user_attrs)
-    |> validate_required(@user_attrs -- [:provider, :token])
+    |> validate_required(@required_attrs)
   end
 end

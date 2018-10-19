@@ -19,7 +19,6 @@ defmodule Travenger.Accounts.UserTest do
       assert ch.errors[:image_url]
       assert ch.errors[:first_name]
       assert ch.errors[:last_name]
-      assert ch.errors[:gender]
     end
   end
 end
