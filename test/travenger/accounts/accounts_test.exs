@@ -14,6 +14,7 @@ defmodule Travenger.AccountsTest do
   @follow_user_params_error "invalid params"
   @already_followed_error [user_id_followed_user_id: {"has already been taken", []}]
   @same_user_error "followed user is the same with the follower"
+  @maximum_members_error "maximum number of members reached"
 
   describe "auth_or_register_users/1" do
     test "creates new user if user does not exist" do
@@ -252,6 +253,25 @@ defmodule Travenger.AccountsTest do
       {:error, error} = Accounts.accept_invitation(nil)
 
       assert error == @invalid_invitation_error
+    end
+  end
+
+  describe "accept_invitation/1 for group when maximum members reached" do
+    test "returns error" do
+      group = insert(:group, member_limit: 3)
+      invitation = insert(:invitation, group: group, type: :group)
+
+      insert_list(3, :membership, group: group, role: :member)
+
+      insert(:membership, %{
+        user: invitation.user,
+        group: invitation.group,
+        membership_status: %{status: :invited}
+      })
+
+      {:error, error} = Accounts.accept_invitation(invitation)
+
+      assert error == @maximum_members_error
     end
   end
 
