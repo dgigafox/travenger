@@ -49,7 +49,7 @@ defmodule Travenger.GroupsTest do
       %{membership: membership}
     end
 
-    test "returns a user group", %{membership: membership} do
+    test "returns a membership", %{membership: membership} do
       assert membership.id
       assert membership.user
       assert membership.group
@@ -60,6 +60,17 @@ defmodule Travenger.GroupsTest do
       assert membership.membership_status
       assert membership.membership_status.status == :pending
       assert membership.membership_status.joined_at
+    end
+  end
+
+  describe "join_group/2 when group reached maximum number of members" do
+    test "returns error", %{user: user} do
+      group = insert(:group, member_limit: 3)
+      insert_list(3, :membership, group: group, role: :member)
+
+      {:error, error} = Groups.join_group(user, group)
+
+      assert error == @maximum_members_error
     end
   end
 

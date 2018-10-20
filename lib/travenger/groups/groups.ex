@@ -133,6 +133,20 @@ defmodule Travenger.Groups do
   Joins a group
   """
   def join_group(%User{} = user, %Group{} = group) do
+    Multi.new()
+    |> Multi.run(:member_limit_status, &is_full?(&1, group))
+    |> Multi.run(:membership, &join_group(&1, user, group))
+    |> Repo.transaction()
+    |> case do
+      {:error, _ops, val, _ch} ->
+        {:error, val}
+
+      {:ok, %{membership: membership}} ->
+        {:ok, membership}
+    end
+  end
+
+  def join_group(_, %User{} = user, %Group{} = group) do
     %Membership{
       user: user,
       group: group
