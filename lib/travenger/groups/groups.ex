@@ -179,6 +179,7 @@ defmodule Travenger.Groups do
   """
   def invite(%User{} = user, %Group{} = group) do
     Multi.new()
+    |> Multi.run(:member_limit_status, &is_full?(&1, group))
     |> Multi.run(:group_invitation, &find_group_invitation(&1, user, group))
     |> Multi.insert(
       :membership_status,

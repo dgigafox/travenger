@@ -119,6 +119,17 @@ defmodule Travenger.GroupsTest do
     end
   end
 
+  describe "invite/2 when group reached maximum number of members" do
+    test "returns error", %{user: user} do
+      group = insert(:group, member_limit: 3)
+      insert_list(3, :membership, group: group, role: :member)
+
+      {:error, error} = Groups.invite(user, group)
+
+      assert error == @maximum_members_error
+    end
+  end
+
   describe "invite/2 with existing invitation" do
     test "returns error", %{user: user} do
       group = insert(:group)
