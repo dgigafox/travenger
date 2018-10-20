@@ -21,6 +21,7 @@ defmodule Travenger.Groups.Group do
     field(:name, :string)
     field(:image_url, :string)
     field(:description, :string)
+    field(:member_limit, :integer)
 
     field(:deleted_at, :naive_datetime)
 
