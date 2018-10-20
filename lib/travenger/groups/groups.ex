@@ -5,6 +5,7 @@ defmodule Travenger.Groups do
 
   import Ecto.Query, warn: false
   import Travenger.Helpers.Queries
+  import Travenger.Helpers.Queries.Membership
 
   alias Ecto.Multi
 
@@ -22,6 +23,7 @@ defmodule Travenger.Groups do
   alias Travenger.Repo
 
   @member_limit_error "cannot set limit less than current number of members"
+  @member_roles ~w(creator admin member)a
 
   @doc """
   Returns the list of groups.
@@ -151,6 +153,7 @@ defmodule Travenger.Groups do
     params = %{status: :approved}
 
     Multi.new()
+    |> Multi.run(:member_limit_status, &is_full?(&1, m.group))
     |> Multi.update(
       :membership_status,
       MembershipStatus.update_changeset(m.membership_status, params)
@@ -209,6 +212,15 @@ defmodule Travenger.Groups do
   ###########################################################################
   # => Private Functions
   ###########################################################################
+  defp is_full?(_, %Group{member_limit: nil}), do: {:ok, "not yet full"}
+
+  defp is_full?(_, %Group{member_limit: limit} = group) do
+    case count_members(group) == limit do
+      true -> {:error, "maximum number of members reached"}
+      _ -> {:ok, "not yet full"}
+    end
+  end
+
   defp verify_member_limit(group, %{member_limit: limit}) do
     case limit >= count_members(group) do
       true -> {:ok, group}
@@ -221,6 +233,7 @@ defmodule Travenger.Groups do
   defp count_members(group) do
     Membership
     |> where_group(%{group_id: group.id})
+    |> where_roles(%{roles: @member_roles})
     |> Repo.aggregate(:count, :id)
   end
 
