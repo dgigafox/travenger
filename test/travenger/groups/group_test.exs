@@ -27,12 +27,28 @@ defmodule Travenger.Groups.GroupTest do
     test "returns a valid changeset" do
       attrs = %{
         image_url: "http://website.com/new_image.png",
-        description: "new description"
+        description: "new description",
+        member_limit: 2
       }
 
       ch = Group.update_changeset(build(:group), attrs)
 
       assert ch.valid?
+    end
+
+    test "returns invalid changeset" do
+      attrs = %{
+        member_limit: 1
+      }
+
+      ch = Group.update_changeset(build(:group), attrs)
+
+      assert ch.errors == [
+               member_limit: {
+                 "must be greater than or equal to %{number}",
+                 [validation: :number, number: 2]
+               }
+             ]
     end
   end
 

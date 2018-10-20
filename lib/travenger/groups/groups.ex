@@ -21,6 +21,8 @@ defmodule Travenger.Groups do
 
   alias Travenger.Repo
 
+  @member_limit_error "cannot set limit less than current number of members"
+
   @doc """
   Returns the list of groups.
 
@@ -105,9 +107,11 @@ defmodule Travenger.Groups do
 
   """
   def update_group(%Group{} = group, attrs) do
-    group
-    |> Group.update_changeset(attrs)
-    |> Repo.update()
+    with {:ok, group} <- verify_member_limit(group, attrs) do
+      group
+      |> Group.update_changeset(attrs)
+      |> Repo.update()
+    end
   end
 
   @doc """
@@ -205,6 +209,21 @@ defmodule Travenger.Groups do
   ###########################################################################
   # => Private Functions
   ###########################################################################
+  defp verify_member_limit(group, %{member_limit: limit}) do
+    case limit >= count_members(group) do
+      true -> {:ok, group}
+      _ -> {:error, @member_limit_error}
+    end
+  end
+
+  defp verify_member_limit(group, _attrs), do: group
+
+  defp count_members(group) do
+    Membership
+    |> where_group(%{group_id: group.id})
+    |> Repo.aggregate(:count, :id)
+  end
+
   defp update_membership_status(%{membership_status: mstatus}, membership) do
     membership
     |> Map.put(:membership_status, mstatus)

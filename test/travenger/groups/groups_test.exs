@@ -7,6 +7,8 @@ defmodule Travenger.GroupsTest do
   alias Travenger.Accounts.Invitation
   alias Travenger.Groups
 
+  @member_limit_error "cannot set limit less than current number of members"
+
   setup do
     %{user: insert(:user)}
   end
@@ -193,7 +195,8 @@ defmodule Travenger.GroupsTest do
       params = %{
         name: "New Group Name",
         image_url: "http://website.com/new_image.png",
-        description: "new description"
+        description: "new description",
+        member_limit: 8
       }
 
       {:ok, group} = Groups.update_group(group, params)
@@ -205,6 +208,20 @@ defmodule Travenger.GroupsTest do
       assert group.name == params.name
       assert group.image_url == params.image_url
       assert group.description == params.description
+      assert group.member_limit == params.member_limit
+    end
+  end
+
+  describe "update_group/2 setting member limit less than current member count" do
+    test "returns error" do
+      group = insert(:group)
+      insert_list(4, :membership, group: group)
+
+      params = %{member_limit: 3}
+
+      {:error, error} = Groups.update_group(group, params)
+
+      assert error == @member_limit_error
     end
   end
 
