@@ -216,7 +216,7 @@ defmodule Travenger.Groups do
     end
   end
 
-  defp verify_member_limit(group, _attrs), do: group
+  defp verify_member_limit(group, _attrs), do: {:ok, group}
 
   defp count_members(group) do
     Membership
