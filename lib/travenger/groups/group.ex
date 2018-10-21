@@ -16,12 +16,13 @@ defmodule Travenger.Groups.Group do
   alias Travenger.Posts.Event
 
   @group_attrs ~w(name image_url description member_limit)
+  @default_limit 1_000
 
   schema "groups" do
     field(:name, :string)
     field(:image_url, :string)
     field(:description, :string)
-    field(:member_limit, :integer)
+    field(:member_limit, :integer, default: @default_limit)
 
     field(:deleted_at, :naive_datetime)
 
@@ -55,7 +56,9 @@ defmodule Travenger.Groups.Group do
   end
 
   defp validate_member_limit(%{changes: %{member_limit: _limit}} = ch) do
-    validate_number(ch, :member_limit, greater_than_or_equal_to: 2)
+    ch
+    |> validate_number(:member_limit, greater_than_or_equal_to: 2)
+    |> validate_number(:member_limit, less_than_or_equal_to: @default_limit)
   end
 
   defp validate_member_limit(ch), do: ch

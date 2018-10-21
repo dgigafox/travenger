@@ -227,8 +227,6 @@ defmodule Travenger.Groups do
   def invite(%User{}, _), do: {:error, "invalid group"}
   def invite(_, _), do: {:error, "invalid user and group"}
 
-  def is_full?(_, %Group{member_limit: nil}), do: {:ok, "not yet full"}
-
   def is_full?(_, %Group{member_limit: limit} = group) do
     case count_members(group) == limit do
       true -> {:error, "maximum number of members reached"}
