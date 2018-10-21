@@ -16,6 +16,7 @@ defmodule Travenger.Accounts do
     User
   }
 
+  alias Travenger.Groups
   alias Travenger.Repo
 
   @doc """
@@ -105,6 +106,7 @@ defmodule Travenger.Accounts do
     invitation = Repo.preload(invitation, [:user, :group])
 
     Multi.new()
+    |> Multi.run(:member_limit_status, &Groups.is_full?(&1, invitation.group))
     |> Multi.update(:invitation, Invitation.accept_changeset(invitation))
     |> Multi.run(:membership, &update_membership(&1))
     |> Repo.transaction()

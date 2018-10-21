@@ -7,6 +7,9 @@ defmodule Travenger.GroupsTest do
   alias Travenger.Accounts.Invitation
   alias Travenger.Groups
 
+  @member_limit_error "cannot set limit less than current number of members"
+  @maximum_members_error "maximum number of members reached"
+
   setup do
     %{user: insert(:user)}
   end
@@ -46,7 +49,7 @@ defmodule Travenger.GroupsTest do
       %{membership: membership}
     end
 
-    test "returns a user group", %{membership: membership} do
+    test "returns a membership", %{membership: membership} do
       assert membership.id
       assert membership.user
       assert membership.group
@@ -57,6 +60,17 @@ defmodule Travenger.GroupsTest do
       assert membership.membership_status
       assert membership.membership_status.status == :pending
       assert membership.membership_status.joined_at
+    end
+  end
+
+  describe "join_group/2 when group reached maximum number of members" do
+    test "returns error", %{user: user} do
+      group = insert(:group, member_limit: 3)
+      insert_list(3, :membership, group: group, role: :member)
+
+      {:error, error} = Groups.join_group(user, group)
+
+      assert error == @maximum_members_error
     end
   end
 
@@ -113,6 +127,17 @@ defmodule Travenger.GroupsTest do
              |> where([i], i.type == ^:group)
              |> where([i], i.status == ^:pending)
              |> Repo.one()
+    end
+  end
+
+  describe "invite/2 when group reached maximum number of members" do
+    test "returns error", %{user: user} do
+      group = insert(:group, member_limit: 3)
+      insert_list(3, :membership, group: group, role: :member)
+
+      {:error, error} = Groups.invite(user, group)
+
+      assert error == @maximum_members_error
     end
   end
 
@@ -186,6 +211,20 @@ defmodule Travenger.GroupsTest do
     end
   end
 
+  describe "approve_join_request/1 when max number of members reached" do
+    test "returns error" do
+      group = insert(:group, member_limit: 3)
+      insert(:membership, group: group, role: :creator)
+      insert(:membership, group: group, role: :admin)
+      insert(:membership, group: group, role: :member)
+      membership = insert(:membership, group: group, role: :waiting)
+
+      {:error, error} = Groups.approve_join_request(membership)
+
+      assert error == @maximum_members_error
+    end
+  end
+
   describe "update_group/2" do
     setup do
       group = insert(:group)
@@ -193,7 +232,8 @@ defmodule Travenger.GroupsTest do
       params = %{
         name: "New Group Name",
         image_url: "http://website.com/new_image.png",
-        description: "new description"
+        description: "new description",
+        member_limit: 8
       }
 
       {:ok, group} = Groups.update_group(group, params)
@@ -205,6 +245,20 @@ defmodule Travenger.GroupsTest do
       assert group.name == params.name
       assert group.image_url == params.image_url
       assert group.description == params.description
+      assert group.member_limit == params.member_limit
+    end
+  end
+
+  describe "update_group/2 setting member limit less than current member count" do
+    test "returns error" do
+      group = insert(:group)
+      insert_list(4, :membership, group: group, role: :member)
+
+      params = %{member_limit: 3}
+
+      {:error, error} = Groups.update_group(group, params)
+
+      assert error == @member_limit_error
     end
   end
 

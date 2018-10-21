@@ -5,6 +5,7 @@ defmodule Travenger.Groups do
 
   import Ecto.Query, warn: false
   import Travenger.Helpers.Queries
+  import Travenger.Helpers.Queries.Membership
 
   alias Ecto.Multi
 
@@ -20,6 +21,9 @@ defmodule Travenger.Groups do
   }
 
   alias Travenger.Repo
+
+  @member_limit_error "cannot set limit less than current number of members"
+  @member_roles ~w(creator admin member)a
 
   @doc """
   Returns the list of groups.
@@ -105,9 +109,14 @@ defmodule Travenger.Groups do
 
   """
   def update_group(%Group{} = group, attrs) do
-    group
-    |> Group.update_changeset(attrs)
-    |> Repo.update()
+    Multi.new()
+    |> Multi.run(:group, &verify_member_limit(&1, group, attrs))
+    |> Multi.update(:updated_group, Group.update_changeset(group, attrs))
+    |> Repo.transaction()
+    |> case do
+      {:error, _ops, val, _ch} -> {:error, val}
+      {:ok, %{updated_group: group}} -> {:ok, group}
+    end
   end
 
   @doc """
@@ -127,6 +136,20 @@ defmodule Travenger.Groups do
   Joins a group
   """
   def join_group(%User{} = user, %Group{} = group) do
+    Multi.new()
+    |> Multi.run(:member_limit_status, &is_full?(&1, group))
+    |> Multi.run(:membership, &join_group(&1, user, group))
+    |> Repo.transaction()
+    |> case do
+      {:error, _ops, val, _ch} ->
+        {:error, val}
+
+      {:ok, %{membership: membership}} ->
+        {:ok, membership}
+    end
+  end
+
+  def join_group(_, %User{} = user, %Group{} = group) do
     %Membership{
       user: user,
       group: group
@@ -147,6 +170,7 @@ defmodule Travenger.Groups do
     params = %{status: :approved}
 
     Multi.new()
+    |> Multi.run(:member_limit_status, &is_full?(&1, m.group))
     |> Multi.update(
       :membership_status,
       MembershipStatus.update_changeset(m.membership_status, params)
@@ -172,6 +196,7 @@ defmodule Travenger.Groups do
   """
   def invite(%User{} = user, %Group{} = group) do
     Multi.new()
+    |> Multi.run(:member_limit_status, &is_full?(&1, group))
     |> Multi.run(:group_invitation, &find_group_invitation(&1, user, group))
     |> Multi.insert(
       :membership_status,
@@ -202,9 +227,33 @@ defmodule Travenger.Groups do
   def invite(%User{}, _), do: {:error, "invalid group"}
   def invite(_, _), do: {:error, "invalid user and group"}
 
+  def is_full?(_, %Group{member_limit: limit} = group) do
+    case count_members(group) == limit do
+      true -> {:error, "maximum number of members reached"}
+      _ -> {:ok, "not yet full"}
+    end
+  end
+
   ###########################################################################
   # => Private Functions
   ###########################################################################
+
+  defp verify_member_limit(_, group, %{member_limit: limit}) do
+    case limit >= count_members(group) do
+      true -> {:ok, group}
+      _ -> {:error, @member_limit_error}
+    end
+  end
+
+  defp verify_member_limit(_, group, _attrs), do: {:ok, group}
+
+  defp count_members(group) do
+    Membership
+    |> where_group(%{group_id: group.id})
+    |> where_roles(%{roles: @member_roles})
+    |> Repo.aggregate(:count, :id)
+  end
+
   defp update_membership_status(%{membership_status: mstatus}, membership) do
     membership
     |> Map.put(:membership_status, mstatus)

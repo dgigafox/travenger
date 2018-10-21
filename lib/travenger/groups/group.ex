@@ -15,12 +15,14 @@ defmodule Travenger.Groups.Group do
   alias Travenger.Groups.MembershipStatus
   alias Travenger.Posts.Event
 
-  @group_attrs ~w(name image_url description)
+  @group_attrs ~w(name image_url description member_limit)
+  @default_limit 1_000
 
   schema "groups" do
     field(:name, :string)
     field(:image_url, :string)
     field(:description, :string)
+    field(:member_limit, :integer, default: @default_limit)
 
     field(:deleted_at, :naive_datetime)
 
@@ -44,6 +46,7 @@ defmodule Travenger.Groups.Group do
   def update_changeset(group, attrs) do
     group
     |> cast(attrs, @group_attrs)
+    |> validate_member_limit()
   end
 
   def delete_changeset(group, attrs \\ %{}) do
@@ -51,6 +54,14 @@ defmodule Travenger.Groups.Group do
     |> cast(attrs, [])
     |> put_change(:deleted_at, DateTime.utc_now())
   end
+
+  defp validate_member_limit(%{changes: %{member_limit: _limit}} = ch) do
+    ch
+    |> validate_number(:member_limit, greater_than_or_equal_to: 2)
+    |> validate_number(:member_limit, less_than_or_equal_to: @default_limit)
+  end
+
+  defp validate_member_limit(ch), do: ch
 
   defp put_member(ch) do
     put_assoc(ch, :members, [
