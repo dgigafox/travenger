@@ -109,10 +109,13 @@ defmodule Travenger.Groups do
 
   """
   def update_group(%Group{} = group, attrs) do
-    with {:ok, group} <- verify_member_limit(group, attrs) do
-      group
-      |> Group.update_changeset(attrs)
-      |> Repo.update()
+    Multi.new()
+    |> Multi.run(:group, &verify_member_limit(&1, group, attrs))
+    |> Multi.update(:updated_group, Group.update_changeset(group, attrs))
+    |> Repo.transaction()
+    |> case do
+      {:error, _ops, val, _ch} -> {:error, val}
+      {:ok, %{updated_group: group}} -> {:ok, group}
     end
   end
 
@@ -237,14 +240,14 @@ defmodule Travenger.Groups do
   # => Private Functions
   ###########################################################################
 
-  defp verify_member_limit(group, %{member_limit: limit}) do
+  defp verify_member_limit(_, group, %{member_limit: limit}) do
     case limit >= count_members(group) do
       true -> {:ok, group}
       _ -> {:error, @member_limit_error}
     end
   end
 
-  defp verify_member_limit(group, _attrs), do: {:ok, group}
+  defp verify_member_limit(_, group, _attrs), do: {:ok, group}
 
   defp count_members(group) do
     Membership
