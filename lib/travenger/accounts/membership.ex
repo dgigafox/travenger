@@ -62,6 +62,20 @@ defmodule Travenger.Accounts.Membership do
     |> put_invited_status()
   end
 
+  def assign_admin_changeset(membership, attrs \\ %{}) do
+    membership
+    |> cast(attrs, [:role])
+    |> validate_role([:member])
+    |> put_change(:role, :admin)
+  end
+
+  defp validate_role(ch, valid_status) when is_list(valid_status) do
+    case get_field(ch, :role) in valid_status do
+      false -> add_error(ch, :role, "is invalid")
+      _ -> ch
+    end
+  end
+
   defp put_invited_status(ch) do
     put_assoc(ch, :membership_status, %MembershipStatus{
       status: :invited,

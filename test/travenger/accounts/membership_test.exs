@@ -64,4 +64,22 @@ defmodule Travenger.Accounts.MembershipTest do
       assert ch.changes[:membership_status]
     end
   end
+
+  describe "assign_admin_changeset/2" do
+    test "returns a valid changeset" do
+      membership = build(:membership, role: :member)
+      ch = Membership.assign_admin_changeset(membership)
+
+      assert ch.valid?
+      assert ch.changes[:role] == :admin
+    end
+
+    test "returns invalid changeset if status is invalid" do
+      membership = build(:membership, role: :waiting)
+      ch = Membership.assign_admin_changeset(membership)
+
+      refute ch.valid?
+      assert ch.errors == [role: {"is invalid", []}]
+    end
+  end
 end
