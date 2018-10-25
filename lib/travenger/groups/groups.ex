@@ -227,6 +227,21 @@ defmodule Travenger.Groups do
   def invite(%User{}, _), do: {:error, "invalid group"}
   def invite(_, _), do: {:error, "invalid user and group"}
 
+  @doc """
+  Assign a member as an admin
+  """
+  def assign_admin(%Membership{} = membership) do
+    membership
+    |> Repo.preload([:group, :user, :membership_status])
+    |> Membership.assign_admin_changeset()
+    |> Repo.update()
+  end
+
+  def assign_admin(_), do: {:error, "invalid membership"}
+
+  @doc """
+  Checks whether the groups has reached max members or not yet
+  """
   def is_full?(_, %Group{member_limit: limit} = group) do
     case count_members(group) == limit do
       true -> {:error, "maximum number of members reached"}
