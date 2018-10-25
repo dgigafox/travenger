@@ -240,6 +240,18 @@ defmodule Travenger.Groups do
   def assign_admin(_), do: {:error, "invalid membership"}
 
   @doc """
+  Remove an admin and update its role back to member
+  """
+  def remove_admin(%Membership{} = membership) do
+    membership
+    |> Repo.preload([:group, :user, :membership_status])
+    |> Membership.remove_admin_changeset()
+    |> Repo.update()
+  end
+
+  def remove_admin(_), do: {:error, "invalid membership"}
+
+  @doc """
   Checks whether the groups has reached max members or not yet
   """
   def is_full?(_, %Group{member_limit: limit} = group) do

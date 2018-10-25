@@ -339,8 +339,24 @@ defmodule Travenger.GroupsTest do
       assert membership.role == :admin
     end
 
-    test "return error for invalid membership" do
+    test "returns error for invalid membership" do
       {:error, error} = Groups.assign_admin(nil)
+
+      assert error == "invalid membership"
+    end
+  end
+
+  describe "remove_admin/1" do
+    test "returns a membership with member role" do
+      membership = insert(:membership, role: :admin)
+      {:ok, membership} = Groups.remove_admin(membership)
+
+      assert membership.id
+      assert membership.role == :member
+    end
+
+    test "returns error for invalid membership" do
+      {:error, error} = Groups.remove_admin(nil)
 
       assert error == "invalid membership"
     end
