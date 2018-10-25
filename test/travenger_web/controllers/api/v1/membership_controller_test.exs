@@ -139,4 +139,66 @@ defmodule TravengerWeb.Api.V1.MembershipControllerTest do
       assert json_response(conn, 403)["errors"] == @forbidden_error_code
     end
   end
+
+  describe "remove_admin/2" do
+    setup %{conn: conn, user: user} do
+      group = insert(:group)
+      insert(:membership, user: user, group: group, role: :admin)
+      membership = insert(:membership, group: group, role: :admin)
+
+      path =
+        api_v1_group_membership_membership_path(
+          conn,
+          :remove_admin,
+          group.id,
+          membership.id
+        )
+
+      conn = put(conn, path)
+      %{assigns: %{membership: membership}} = conn
+
+      %{membership: membership, conn: conn, group: group}
+    end
+
+    test "returns an updated membership", c do
+      expected = render_json(MembershipView, "show.json", %{membership: c.membership})
+      assert json_response(c.conn, :ok) == expected
+    end
+
+    test "returns error when user is not authenticated", c do
+      conn = build_conn()
+
+      path =
+        api_v1_group_membership_membership_path(
+          conn,
+          :remove_admin,
+          c.group.id,
+          c.membership.id
+        )
+
+      conn = put(conn, path)
+
+      assert json_response(conn, 401)["errors"] == @unauthorized_error_code
+    end
+  end
+
+  describe "remove_admin/2 when current user is not creator/admin of the group" do
+    test "returns error", %{conn: conn, user: user} do
+      group = insert(:group)
+      insert(:membership, user: user, role: :admin)
+      membership = insert(:membership, group: group, role: :member)
+
+      path =
+        api_v1_group_membership_membership_path(
+          conn,
+          :remove_admin,
+          group.id,
+          membership.id
+        )
+
+      conn = put(conn, path)
+
+      assert json_response(conn, 403)["errors"] == @forbidden_error_code
+    end
+  end
 end
