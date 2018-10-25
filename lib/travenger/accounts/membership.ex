@@ -69,6 +69,13 @@ defmodule Travenger.Accounts.Membership do
     |> put_change(:role, :admin)
   end
 
+  def remove_admin_changeset(membership, attrs \\ %{}) do
+    membership
+    |> cast(attrs, [:role])
+    |> validate_role([:admin])
+    |> put_change(:role, :member)
+  end
+
   defp validate_role(ch, valid_status) when is_list(valid_status) do
     case get_field(ch, :role) in valid_status do
       false -> add_error(ch, :role, "is invalid")
