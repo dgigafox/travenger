@@ -18,7 +18,6 @@ defmodule Travenger.Groups.MembershipStatus do
     field(:joined_at, :naive_datetime)
     field(:unbanned_at, :naive_datetime)
     field(:accepted_at, :naive_datetime)
-    field(:removed_at, :naive_datetime)
 
     belongs_to(:membership, Membership)
 
@@ -31,17 +30,10 @@ defmodule Travenger.Groups.MembershipStatus do
     |> validate_required(:status)
   end
 
-  def approve_changeset(membership_status) do
+  def update_changeset(membership_status, attrs) do
     membership_status
-    |> change()
-    |> put_change(:status, :approved)
+    |> cast(attrs, [:status])
+    |> validate_required(:status)
     |> put_change(:approved_at, DateTime.utc_now())
-  end
-
-  def remove_changeset(membership_status) do
-    membership_status
-    |> change()
-    |> put_change(:status, :removed)
-    |> put_change(:removed_at, DateTime.utc_now())
   end
 end

@@ -21,8 +21,7 @@ defenum(
   invited: 2,
   accepted: 3,
   banned: 4,
-  unbanned: 5,
-  removed: 6
+  unbanned: 5
 )
 
 defenum(
