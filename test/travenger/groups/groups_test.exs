@@ -378,5 +378,11 @@ defmodule Travenger.GroupsTest do
       refute membership.role
       assert membership.membership_status.status == :removed
     end
+
+    test "returns error for invalid membership" do
+      {:error, error} = Groups.remove_member(nil)
+
+      assert error == "invalid membership"
+    end
   end
 end

@@ -259,6 +259,8 @@ defmodule Travenger.Groups do
     |> Repo.update()
   end
 
+  def remove_member(_), do: {:error, "invalid membership"}
+
   @doc """
   Checks whether the groups has reached max members or not yet
   """
