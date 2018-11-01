@@ -361,4 +361,22 @@ defmodule Travenger.GroupsTest do
       assert error == "invalid membership"
     end
   end
+
+  describe "remove_member/1" do
+    test "returns a membership with nil role and removed status" do
+      status = insert(:membership_status, status: :invited)
+
+      membership =
+        insert(
+          :membership,
+          role: :member,
+          membership_status: status
+        )
+
+      {:ok, membership} = Groups.remove_member(membership)
+
+      refute membership.role
+      assert membership.membership_status.status == :removed
+    end
+  end
 end

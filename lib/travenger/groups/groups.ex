@@ -163,18 +163,12 @@ defmodule Travenger.Groups do
   Approves a join request
   """
   def approve_join_request(%Membership{} = membership) do
-    m =
-      membership
-      |> Repo.preload([:membership_status, :user, :group])
-
-    params = %{status: :approved}
+    m = Repo.preload(membership, [:membership_status, :user, :group])
+    %{group: group, membership_status: st} = m
 
     Multi.new()
-    |> Multi.run(:member_limit_status, &is_full?(&1, m.group))
-    |> Multi.update(
-      :membership_status,
-      MembershipStatus.update_changeset(m.membership_status, params)
-    )
+    |> Multi.run(:member_limit_status, &is_full?(&1, group))
+    |> Multi.update(:membership_status, MembershipStatus.approve_changeset(st))
     |> Multi.run(:membership, &update_membership_status(&1, m))
     |> Repo.transaction()
     |> case do
@@ -250,6 +244,20 @@ defmodule Travenger.Groups do
   end
 
   def remove_admin(_), do: {:error, "invalid membership"}
+
+  def remove_member(%Membership{} = membership) do
+    attrs = %{
+      membership_status: %{
+        status: :removed,
+        removed_at: DateTime.utc_now()
+      }
+    }
+
+    membership
+    |> Repo.preload([:group, :user, :membership_status])
+    |> Membership.remove_member_changeset(attrs)
+    |> Repo.update()
+  end
 
   @doc """
   Checks whether the groups has reached max members or not yet

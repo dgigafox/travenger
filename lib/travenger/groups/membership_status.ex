@@ -8,7 +8,7 @@ defmodule Travenger.Groups.MembershipStatus do
   alias Travenger.Accounts.Membership
 
   @attrs ~w(status approved_at banned_at invited_at
-  joined_at unbanned_at accepted_at)a
+  joined_at unbanned_at accepted_at removed_at)a
 
   schema "membership_statuses" do
     field(:status, MembershipStatusEnum, default: :pending)
@@ -18,6 +18,7 @@ defmodule Travenger.Groups.MembershipStatus do
     field(:joined_at, :naive_datetime)
     field(:unbanned_at, :naive_datetime)
     field(:accepted_at, :naive_datetime)
+    field(:removed_at, :naive_datetime)
 
     belongs_to(:membership, Membership)
 
@@ -30,10 +31,17 @@ defmodule Travenger.Groups.MembershipStatus do
     |> validate_required(:status)
   end
 
-  def update_changeset(membership_status, attrs) do
+  def approve_changeset(membership_status) do
     membership_status
-    |> cast(attrs, [:status])
-    |> validate_required(:status)
+    |> change()
+    |> put_change(:status, :approved)
     |> put_change(:approved_at, DateTime.utc_now())
+  end
+
+  def remove_changeset(membership_status) do
+    membership_status
+    |> change()
+    |> put_change(:status, :removed)
+    |> put_change(:removed_at, DateTime.utc_now())
   end
 end
