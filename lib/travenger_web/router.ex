@@ -44,6 +44,7 @@ defmodule TravengerWeb.Router do
           put("/approve", MembershipController, :approve)
           put("/assign-admin", MembershipController, :assign_admin)
           put("/remove-admin", MembershipController, :remove_admin)
+          put("/remove-member", MembershipController, :remove_member)
         end
       end
     end
