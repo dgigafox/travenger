@@ -75,7 +75,8 @@ defmodule Travenger.Factory do
   def following_factory do
     %Following{
       user: build(:user),
-      followed_user: build(:user)
+      followed_user: build(:user),
+      type: :user
     }
   end
 

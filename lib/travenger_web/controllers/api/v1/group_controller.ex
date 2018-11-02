@@ -9,11 +9,12 @@ defmodule TravengerWeb.Api.V1.GroupController do
   alias Travenger.Groups.Group
 
   alias TravengerWeb.Api.V1.{
+    FollowingView,
     GroupView,
     MembershipView
   }
 
-  @require_auth_functions ~w(create join update invite delete)a
+  @require_auth_functions ~w(create join update invite delete follow)a
   @require_admin_functions ~w(invite update)a
   @require_creator_functions ~w(delete)a
 
@@ -25,6 +26,8 @@ defmodule TravengerWeb.Api.V1.GroupController do
   )
 
   plug(Travenger.Plugs.CheckGroupAdmin when action in @require_admin_functions)
+
+  action_fallback(TravengerWeb.FallbackController)
 
   def index(conn, params \\ %{}) do
     params = string_keys_to_atom(params)
@@ -80,6 +83,25 @@ defmodule TravengerWeb.Api.V1.GroupController do
       |> put_status(:no_content)
       |> put_view(GroupView)
       |> render("show.json", group: group)
+    end
+  end
+
+  def follow(%{assigns: %{user: user}} = conn, params) do
+    with params <- string_keys_to_atom(params),
+         %User{} = follower <- Accounts.get_user(user.id),
+         {:ok, group} <- get_group(params.group_id),
+         {:ok, following} <- Groups.follow_group(follower, group) do
+      conn
+      |> put_status(:ok)
+      |> put_view(FollowingView)
+      |> render("show.json", following: following)
+    end
+  end
+
+  defp get_group(id) do
+    case Groups.get_group(id) do
+      nil -> {:error, "invalid group id"}
+      group -> {:ok, group}
     end
   end
 end

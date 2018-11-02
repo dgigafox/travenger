@@ -10,6 +10,7 @@ defmodule Travenger.Groups do
   alias Ecto.Multi
 
   alias Travenger.Accounts.{
+    Following,
     Invitation,
     Membership,
     User
@@ -220,6 +221,19 @@ defmodule Travenger.Groups do
   def invite(_, %Group{}), do: {:error, "invalid user"}
   def invite(%User{}, _), do: {:error, "invalid group"}
   def invite(_, _), do: {:error, "invalid user and group"}
+
+  @doc """
+  Follow a group
+  """
+  def follow_group(%User{} = follower, %Group{} = followed_group) do
+    %Following{user: follower, followed_group: followed_group}
+    |> Following.changeset(%{type: :group})
+    |> Repo.insert()
+  end
+
+  def follow_group(_, %Group{}), do: {:error, "invalid follower"}
+  def follow_group(%User{}, _), do: {:error, "invalid followed group"}
+  def follow_group(_, _), do: {:error, "invalid params"}
 
   @doc """
   Assign a member as an admin

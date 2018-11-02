@@ -29,4 +29,13 @@ defmodule TravengerWeb.FallbackController do
     |> put_status(:unprocessable_entity)
     |> render(ChangesetView, "error.json", changeset: ch)
   end
+
+  @doc """
+  Return bad request error
+  """
+  def call(conn, {:error, error}) do
+    conn
+    |> put_status(:bad_request)
+    |> json(%{error: error})
+  end
 end

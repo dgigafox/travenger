@@ -9,6 +9,10 @@ defmodule Travenger.GroupsTest do
 
   @member_limit_error "cannot set limit less than current number of members"
   @maximum_members_error "maximum number of members reached"
+  @assoc_user_error "invalid follower"
+  @assoc_followed_group_error "invalid followed group"
+  @follow_group_params_error "invalid params"
+  @already_followed_error [user_id_followed_group_id: {"has already been taken", []}]
 
   setup do
     %{user: insert(:user)}
@@ -383,6 +387,44 @@ defmodule Travenger.GroupsTest do
       {:error, error} = Groups.remove_member(nil)
 
       assert error == "invalid membership"
+    end
+  end
+
+  describe "follow_group/2" do
+    setup do
+      follower = insert(:user)
+      followed_group = insert(:group)
+
+      %{follower: follower, followed_group: followed_group}
+    end
+
+    test "returns following record", c do
+      {:ok, following} = Groups.follow_group(c.follower, c.followed_group)
+
+      assert following.id
+      assert following.user_id == c.follower.id
+      assert following.followed_group_id == c.followed_group.id
+    end
+
+    test "returns error when follower is nil", c do
+      {:error, error} = Groups.follow_group(nil, c.followed_group)
+      assert error == @assoc_user_error
+    end
+
+    test "returns error when followed_group is nil", c do
+      {:error, error} = Groups.follow_group(c.follower, nil)
+      assert error == @assoc_followed_group_error
+    end
+
+    test "returns error when follower and followed group are nil" do
+      {:error, error} = Groups.follow_group(nil, nil)
+      assert error == @follow_group_params_error
+    end
+
+    test "returns error when user already followed another group", c do
+      Groups.follow_group(c.follower, c.followed_group)
+      {:error, ch} = Groups.follow_group(c.follower, c.followed_group)
+      assert ch.errors == @already_followed_error
     end
   end
 end
