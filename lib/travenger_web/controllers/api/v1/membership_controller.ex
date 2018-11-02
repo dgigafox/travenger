@@ -7,8 +7,8 @@ defmodule TravengerWeb.Api.V1.MembershipController do
   alias Travenger.Groups
   alias TravengerWeb.Api.V1.MembershipView
 
-  @require_auth_functions ~w(approve assign_admin remove_admin)a
-  @require_admin_functions ~w(approve assign_admin remove_admin)a
+  @require_auth_functions ~w(approve assign_admin remove_admin remove_member)a
+  @require_admin_functions ~w(approve assign_admin remove_admin remove_member)a
 
   plug(Travenger.Plugs.RequireAuth when action in @require_auth_functions)
   plug(Travenger.Plugs.CheckGroupAdmin when action in @require_admin_functions)
@@ -37,6 +37,16 @@ defmodule TravengerWeb.Api.V1.MembershipController do
   def remove_admin(conn, %{"membership_id" => id}) do
     with %Membership{} = membership <- Groups.get_membership(id),
          {:ok, membership} <- Groups.remove_admin(membership) do
+      conn
+      |> put_status(:ok)
+      |> put_view(MembershipView)
+      |> render("show.json", membership: membership)
+    end
+  end
+
+  def remove_member(conn, %{"membership_id" => id}) do
+    with %Membership{} = membership <- Groups.get_membership(id),
+         {:ok, membership} <- Groups.remove_member(membership) do
       conn
       |> put_status(:ok)
       |> put_view(MembershipView)

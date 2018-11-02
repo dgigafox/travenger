@@ -100,4 +100,15 @@ defmodule Travenger.Accounts.MembershipTest do
       assert ch.errors == [role: {"is invalid", []}]
     end
   end
+
+  describe "remove_member_changeset/2" do
+    test "returns a valid changeset" do
+      stat = build(:membership_status, status: :removed)
+      membership = build(:membership, role: :member, membership_status: stat)
+      ch = Membership.remove_member_changeset(membership)
+
+      assert ch.valid?
+      assert ch.changes[:role] == nil
+    end
+  end
 end
