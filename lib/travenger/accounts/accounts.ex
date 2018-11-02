@@ -121,7 +121,7 @@ defmodule Travenger.Accounts do
   def follow_user(%User{} = follower, %User{} = followed_user) do
     with {:ok} <- compare_user(follower, followed_user) do
       %Following{user: follower, followed_user: followed_user}
-      |> Following.changeset()
+      |> Following.changeset(%{type: :user})
       |> Repo.insert()
     end
   end
