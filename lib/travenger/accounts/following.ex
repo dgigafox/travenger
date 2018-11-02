@@ -28,6 +28,7 @@ defmodule Travenger.Accounts.Following do
     |> unique_constraint(:user_id_followed_group_id)
     |> assoc_constraint(:user)
     |> assoc_constraint(:followed_user)
+    |> assoc_constraint(:followed_group)
   end
 
   def validate_assoc_by_type(ch) do

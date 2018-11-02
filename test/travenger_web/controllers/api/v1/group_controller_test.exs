@@ -9,12 +9,14 @@ defmodule TravengerWeb.Api.V1.GroupControllerTest do
 
   alias Travenger.Groups.Group
   alias Travenger.Repo
+  alias TravengerWeb.Api.V1.FollowingView
   alias TravengerWeb.Api.V1.GroupView
   alias TravengerWeb.Api.V1.MembershipView
 
   @unauthorized_error_code [%{"status" => "401", "title" => "Unauthorized"}]
   @forbidden_error_code [%{"status" => "403", "title" => "Forbidden"}]
   @page_fields %{"page_size" => 20, "page_number" => 1}
+  @invalid_group_error "invalid group id"
 
   setup do
     user = insert(:user)
@@ -270,6 +272,35 @@ defmodule TravengerWeb.Api.V1.GroupControllerTest do
 
     test "returns error", %{conn: conn} do
       assert json_response(conn, 403)["errors"] == @forbidden_error_code
+    end
+  end
+
+  describe "follow/2" do
+    setup %{conn: conn} do
+      group = insert(:group)
+      conn = post(conn, api_v1_group_group_path(conn, :follow, group.id))
+      %{assigns: %{following: following}} = conn
+
+      %{conn: conn, group: group, following: following}
+    end
+
+    test "returns a following record with follower and followed group", c do
+      expected = render_json(FollowingView, "show.json", %{following: c.following})
+
+      assert json_response(c.conn, :ok) == expected
+    end
+
+    test "returns error when user is not authenticated", c do
+      conn = build_conn()
+      conn = post(conn, api_v1_group_group_path(conn, :follow, c.group.id))
+      assert json_response(conn, 401)["errors"] == @unauthorized_error_code
+    end
+  end
+
+  describe "follow/2 when group does not exist" do
+    test "returns error", %{conn: conn} do
+      conn = post(conn, api_v1_group_group_path(conn, :follow, 9_999))
+      assert json_response(conn, 400)["error"] == @invalid_group_error
     end
   end
 end
