@@ -427,4 +427,38 @@ defmodule Travenger.GroupsTest do
       assert ch.errors == @already_followed_error
     end
   end
+
+  describe "add/rating" do
+    setup do
+      author = insert(:user)
+      group = insert(:group)
+      params = %{rating: 5}
+
+      %{author: author, group: group, params: params}
+    end
+
+    test "returns a rating", c do
+      {:ok, rating} = Groups.add_rating(c.author, c.group, c.params)
+
+      assert rating.id
+      assert rating.author.id == c.author.id
+      assert rating.group.id == c.group.id
+      assert rating.rating == c.params.rating
+    end
+
+    test "returns error if invalid author", c do
+      {:error, error} = Groups.add_rating(nil, c.group, c.params)
+      assert error == "invalid author"
+    end
+
+    test "returns error if invalid group", c do
+      {:error, error} = Groups.add_rating(c.author, nil, c.params)
+      assert error == "invalid group"
+    end
+
+    test "returns error if invalid params", c do
+      {:error, error} = Groups.add_rating(c.author, c.group, nil)
+      assert error == "invalid params"
+    end
+  end
 end
