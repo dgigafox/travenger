@@ -18,7 +18,8 @@ defmodule Travenger.Groups do
 
   alias Travenger.Groups.{
     Group,
-    MembershipStatus
+    MembershipStatus,
+    Rating
   }
 
   alias Travenger.Repo
@@ -274,6 +275,22 @@ defmodule Travenger.Groups do
   end
 
   def remove_member(_), do: {:error, "invalid membership"}
+
+  @doc """
+  Rate a group
+  """
+  def add_rating(%User{} = author, %Group{} = group, %{rating: _r} = params) do
+    %Rating{
+      author: author,
+      group: group
+    }
+    |> Rating.changeset(params)
+    |> Repo.insert()
+  end
+
+  def add_rating(_, %Group{}, %{}), do: {:error, "invalid author"}
+  def add_rating(%User{}, _, %{}), do: {:error, "invalid group"}
+  def add_rating(_, _, _), do: {:error, "invalid params"}
 
   @doc """
   Checks whether the groups has reached max members or not yet

@@ -16,6 +16,8 @@ defmodule Travenger.Factory do
     MembershipStatus
   }
 
+  alias Travenger.Groups.Rating, as: GroupRating
+
   alias Travenger.Notifications.{
     Notification,
     NotificationChange,
@@ -102,6 +104,13 @@ defmodule Travenger.Factory do
     %Notification{
       notifier: build(:user),
       notification_object: build(:notification_object)
+    }
+  end
+
+  def group_rating_factory do
+    %GroupRating{
+      author: build(:user),
+      group: build(:group)
     }
   end
 end
