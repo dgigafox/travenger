@@ -40,6 +40,7 @@ defmodule TravengerWeb.Router do
         post("/join", GroupController, :join)
         post("/invite", GroupController, :invite)
         post("/follow", GroupController, :follow)
+        post("/rate", GroupController, :rate)
 
         resources("/memberships", MembershipController) do
           put("/approve", MembershipController, :approve)
