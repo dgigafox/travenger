@@ -11,10 +11,11 @@ defmodule TravengerWeb.Api.V1.GroupController do
   alias TravengerWeb.Api.V1.{
     FollowingView,
     GroupView,
-    MembershipView
+    MembershipView,
+    RatingView
   }
 
-  @require_auth_functions ~w(create join update invite delete follow)a
+  @require_auth_functions ~w(create join update invite delete follow rate)a
   @require_admin_functions ~w(invite update)a
   @require_creator_functions ~w(delete)a
 
@@ -95,6 +96,18 @@ defmodule TravengerWeb.Api.V1.GroupController do
       |> put_status(:ok)
       |> put_view(FollowingView)
       |> render("show.json", following: following)
+    end
+  end
+
+  def rate(%{assigns: %{user: user}} = conn, params) do
+    with params <- string_keys_to_atom(params),
+         %User{} = author <- Accounts.get_user(user.id),
+         {:ok, group} <- get_group(params.group_id),
+         {:ok, rating} <- Groups.add_rating(author, group, params) do
+      conn
+      |> put_status(:ok)
+      |> put_view(RatingView)
+      |> render("show.json", rating: rating)
     end
   end
 

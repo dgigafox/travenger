@@ -9,9 +9,13 @@ defmodule TravengerWeb.Api.V1.GroupControllerTest do
 
   alias Travenger.Groups.Group
   alias Travenger.Repo
-  alias TravengerWeb.Api.V1.FollowingView
-  alias TravengerWeb.Api.V1.GroupView
-  alias TravengerWeb.Api.V1.MembershipView
+
+  alias TravengerWeb.Api.V1.{
+    FollowingView,
+    GroupView,
+    MembershipView,
+    RatingView
+  }
 
   @unauthorized_error_code [%{"status" => "401", "title" => "Unauthorized"}]
   @forbidden_error_code [%{"status" => "403", "title" => "Forbidden"}]
@@ -301,6 +305,30 @@ defmodule TravengerWeb.Api.V1.GroupControllerTest do
     test "returns error", %{conn: conn} do
       conn = post(conn, api_v1_group_group_path(conn, :follow, 9_999))
       assert json_response(conn, 400)["error"] == @invalid_group_error
+    end
+  end
+
+  describe "rate/2" do
+    setup %{conn: conn} do
+      group = insert(:group)
+      params = %{rating: 5}
+      conn = post(conn, api_v1_group_group_path(conn, :rate, group.id), params)
+      %{assigns: %{rating: rating}} = conn
+
+      %{conn: conn, group: group, rating: rating, params: params}
+    end
+
+    test "returns a rating", c do
+      expected = render_json(RatingView, "show.json", %{rating: c.rating})
+
+      assert json_response(c.conn, :ok) == expected
+    end
+
+    test "returns error when user is not authenticated", c do
+      conn = build_conn()
+      path = api_v1_group_group_path(conn, :rate, c.group.id)
+      conn = post(conn, path, c.params)
+      assert json_response(conn, 401)["errors"] == @unauthorized_error_code
     end
   end
 end
