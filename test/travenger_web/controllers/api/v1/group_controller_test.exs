@@ -13,6 +13,7 @@ defmodule TravengerWeb.Api.V1.GroupControllerTest do
   alias TravengerWeb.Api.V1.{
     FollowingView,
     GroupView,
+    InvitationView,
     MembershipView,
     RatingView
   }
@@ -187,22 +188,22 @@ defmodule TravengerWeb.Api.V1.GroupControllerTest do
       params = %{user_id: insert(:user).id}
       path = api_v1_group_group_path(conn, :invite, group.id)
       conn = post(conn, path, params)
-      %{assigns: %{membership: membership}} = conn
+      %{assigns: %{invitation: invitation}} = conn
 
       %{
         conn: conn,
-        membership: membership,
+        invitation: invitation,
         user: user,
         group: group,
         params: params
       }
     end
 
-    test "returns a membership with invited status", %{
+    test "returns an invitation", %{
       conn: conn,
-      membership: m
+      invitation: inv
     } do
-      expected = render_json(MembershipView, "show.json", %{membership: m})
+      expected = render_json(InvitationView, "show.json", %{invitation: inv})
       assert json_response(conn, :ok) == expected
     end
 
