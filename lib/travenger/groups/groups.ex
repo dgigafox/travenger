@@ -8,6 +8,7 @@ defmodule Travenger.Groups do
   import Travenger.Helpers.Queries.Membership
 
   alias Ecto.Multi
+  alias Travenger.Accounts
 
   alias Travenger.Accounts.{
     Following,
@@ -191,30 +192,17 @@ defmodule Travenger.Groups do
   Invite a user to be a member of the group
   """
   def invite(%User{} = user, %Group{} = group) do
+    invitation = %Invitation{user: user, group: group}
+    params = %{type: :group}
+
     Multi.new()
     |> Multi.run(:member_limit_status, &is_full?(&1, group))
-    |> Multi.run(:group_invitation, &find_group_invitation(&1, user, group))
-    |> Multi.insert(
-      :membership_status,
-      %Membership{
-        user: user,
-        group: group
-      }
-      |> Repo.preload([:membership_status])
-      |> Membership.invite_changeset()
-    )
-    |> Multi.insert(
-      :invitation,
-      %Invitation{
-        user: user,
-        group: group,
-        type: :group
-      }
-      |> Invitation.changeset()
-    )
+    |> Multi.run(:existing_invitation, &find_group_invitation(&1, user, group))
+    |> Multi.run(:existing_membership, &find_membership(&1, user, group))
+    |> Multi.insert(:invitation, Invitation.changeset(invitation, params))
     |> Repo.transaction()
     |> case do
-      {:ok, %{membership_status: mstatus}} -> {:ok, mstatus}
+      {:ok, %{invitation: invitation}} -> {:ok, invitation}
       {:error, _ops, ch, _c} -> {:error, ch}
     end
   end
@@ -339,5 +327,21 @@ defmodule Travenger.Groups do
       nil -> {:ok, "no existing invitation"}
       invitation -> {:error, "has #{invitation.status} invitation"}
     end
+  end
+
+  defp find_membership(_, user, group) do
+    case find_membership!(user, group) do
+      nil -> {:ok, "no existing membership"}
+      _ -> {:error, "has existing membership"}
+    end
+  end
+
+  defp find_membership!(user, group) do
+    params = %{
+      user_id: user.id,
+      group_id: group.id
+    }
+
+    Accounts.find_membership(params)
   end
 end

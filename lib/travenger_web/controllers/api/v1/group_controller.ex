@@ -11,6 +11,7 @@ defmodule TravengerWeb.Api.V1.GroupController do
   alias TravengerWeb.Api.V1.{
     FollowingView,
     GroupView,
+    InvitationView,
     MembershipView,
     RatingView
   }
@@ -69,11 +70,11 @@ defmodule TravengerWeb.Api.V1.GroupController do
   def invite(conn, %{"group_id" => gid, "user_id" => uid}) do
     with %User{} = user <- Accounts.get_user(uid),
          %Group{} = group <- Groups.get_group(gid),
-         {:ok, membership} <- Groups.invite(user, group) do
+         {:ok, invitation} <- Groups.invite(user, group) do
       conn
       |> put_status(:ok)
-      |> put_view(MembershipView)
-      |> render("show.json", membership: membership)
+      |> put_view(InvitationView)
+      |> render("show.json", invitation: invitation)
     end
   end
 

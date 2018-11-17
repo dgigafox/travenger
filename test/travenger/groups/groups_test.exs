@@ -1,10 +1,8 @@
 defmodule Travenger.GroupsTest do
   use Travenger.DataCase
 
-  import Ecto.Query
   import Travenger.Factory
 
-  alias Travenger.Accounts.Invitation
   alias Travenger.Groups
 
   @member_limit_error "cannot set limit less than current number of members"
@@ -100,37 +98,14 @@ defmodule Travenger.GroupsTest do
   end
 
   describe "invite/2" do
-    setup %{user: user} do
+    test "returns a pending invitation", %{user: user} do
       group = insert(:group)
-      {:ok, membership} = Groups.invite(user, group)
+      {:ok, invitation} = Groups.invite(user, group)
 
-      %{
-        membership: membership,
-        group: group,
-        user: user
-      }
-    end
-
-    test "returns a membership", %{membership: membership} do
-      assert membership.id
-      assert membership.user
-      assert membership.group
-      assert membership.role == :waiting
-    end
-
-    test "creates an invited membership status", %{membership: membership} do
-      assert membership.membership_status
-      assert membership.membership_status.status == :invited
-      assert membership.membership_status.invited_at
-    end
-
-    test "creates an invitation", %{user: user, group: group} do
-      assert Invitation
-             |> where([i], i.user_id == ^user.id)
-             |> where([i], i.group_id == ^group.id)
-             |> where([i], i.type == ^:group)
-             |> where([i], i.status == ^:pending)
-             |> Repo.one()
+      assert invitation.id
+      assert invitation.user_id == user.id
+      assert invitation.group_id == group.id
+      assert invitation.status == :pending
     end
   end
 
@@ -179,7 +154,7 @@ defmodule Travenger.GroupsTest do
   end
 
   describe "invite/2 when member already have a membership to the group" do
-    setup %{user: user} do
+    test "returns an error", %{user: user} do
       group = insert(:group)
 
       insert(
@@ -189,13 +164,9 @@ defmodule Travenger.GroupsTest do
         membership_status: insert(:membership_status)
       )
 
-      {:error, ch} = Groups.invite(user, group)
+      {:error, msg} = Groups.invite(user, group)
 
-      %{ch: ch}
-    end
-
-    test "returns an error", %{ch: ch} do
-      assert ch.errors == [user_id_group_id: {"has already been taken", []}]
+      assert msg == "has existing membership"
     end
   end
 
