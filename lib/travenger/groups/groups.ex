@@ -13,12 +13,12 @@ defmodule Travenger.Groups do
   alias Travenger.Accounts.{
     Following,
     Invitation,
-    Membership,
     User
   }
 
   alias Travenger.Groups.{
     Group,
+    Membership,
     MembershipStatus,
     Rating
   }

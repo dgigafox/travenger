@@ -3,8 +3,8 @@ defmodule TravengerWeb.Api.V1.MembershipController do
 
   import Travenger.Helpers.Utils
 
-  alias Travenger.Accounts.Membership
   alias Travenger.Groups
+  alias Travenger.Groups.Membership
   alias TravengerWeb.Api.V1.MembershipView
 
   @require_auth_functions ~w(approve assign_admin remove_admin remove_member)a

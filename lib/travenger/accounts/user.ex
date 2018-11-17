@@ -5,10 +5,8 @@ defmodule Travenger.Accounts.User do
   use Ecto.Schema
   import Ecto.Changeset
 
-  alias Travenger.Accounts.{
-    Following,
-    Membership
-  }
+  alias Travenger.Accounts.Following
+  alias Travenger.Groups.Membership
 
   alias Travenger.Posts.{
     Blog,

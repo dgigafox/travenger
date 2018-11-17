@@ -1,4 +1,4 @@
-defmodule Travenger.Accounts.Membership do
+defmodule Travenger.Groups.Membership do
   @moduledoc """
   User Group association schema
   """

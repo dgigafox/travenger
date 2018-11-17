@@ -12,11 +12,11 @@ defmodule Travenger.Accounts do
   alias Travenger.Accounts.{
     Following,
     Invitation,
-    Membership,
     User
   }
 
   alias Travenger.Groups
+  alias Travenger.Groups.Membership
   alias Travenger.Repo
 
   @doc """
