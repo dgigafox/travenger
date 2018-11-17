@@ -2,7 +2,7 @@ defmodule Travenger.Accounts.MembershipTest do
   use ExUnit.Case, async: true
 
   import Travenger.Factory
-  alias Travenger.Accounts.Membership
+  alias Travenger.Groups.Membership
 
   describe "changeset/2" do
     test "returns a valid changeset" do

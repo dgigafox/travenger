@@ -8,10 +8,10 @@ defmodule Travenger.Groups.Group do
 
   alias Travenger.Accounts.{
     Invitation,
-    Membership,
     User
   }
 
+  alias Travenger.Groups.Membership
   alias Travenger.Groups.MembershipStatus
   alias Travenger.Posts.Event
 

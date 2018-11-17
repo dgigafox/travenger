@@ -5,7 +5,7 @@ defmodule Travenger.AccountsTest do
   import Travenger.Helpers.Queries
 
   alias Travenger.Accounts
-  alias Travenger.Accounts.Membership
+  alias Travenger.Groups.Membership
 
   @invalid_invitation_error "invalid invitation"
   @no_membership_error "no membership found"

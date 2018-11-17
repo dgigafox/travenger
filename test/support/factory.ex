@@ -7,12 +7,12 @@ defmodule Travenger.Factory do
   alias Travenger.Accounts.{
     Following,
     Invitation,
-    Membership,
     User
   }
 
   alias Travenger.Groups.{
     Group,
+    Membership,
     MembershipStatus
   }
 

@@ -5,7 +5,7 @@ defmodule Travenger.Groups.MembershipStatus do
   use Ecto.Schema
   import Ecto.Changeset
 
-  alias Travenger.Accounts.Membership
+  alias Travenger.Groups.Membership
 
   @attrs ~w(status approved_at banned_at invited_at
   joined_at unbanned_at accepted_at removed_at)a
