@@ -1,0 +1,7 @@
+{
+  "skip_files": [
+    "lib/travenger/application.ex",
+    "lib/travenger/repo.ex",
+    "lib/travenger_web.ex"
+  ]
+}

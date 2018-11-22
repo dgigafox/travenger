@@ -13,13 +13,4 @@ defmodule Travenger.Helpers.Strings do
     prefix = prefix || random_string(4)
     "#{prefix}-#{random_string(4)}-#{random_string(4)}"
   end
-
-  @doc """
-  Converts literal date string to NaiveDateTime format
-  """
-  def string_to_naive_datetime(date) do
-    with {:ok, date} <- Date.from_iso8601(date) do
-      NaiveDateTime.new(date, ~T[00:00:00])
-    end
-  end
 end

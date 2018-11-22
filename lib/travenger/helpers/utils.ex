@@ -10,8 +10,6 @@ defmodule Travenger.Helpers.Utils do
     String.to_atom(string)
   end
 
-  def to_atom(atom) when is_atom(atom), do: atom
-
   @doc """
   Converts map string keys to atom keys
   """

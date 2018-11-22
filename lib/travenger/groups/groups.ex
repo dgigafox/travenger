@@ -123,19 +123,6 @@ defmodule Travenger.Groups do
   end
 
   @doc """
-  Returns an `%Ecto.Changeset{}` for tracking group changes.
-
-  ## Examples
-
-      iex> change_group(group)
-      %Ecto.Changeset{source: %Group{}}
-
-  """
-  def change_group(%Group{} = group) do
-    Group.changeset(group, %{})
-  end
-
-  @doc """
   Joins a group
   """
   def join_group(%User{} = user, %Group{} = group) do
