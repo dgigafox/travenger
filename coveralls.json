@@ -1,0 +1,15 @@
+{
+  "skip_files": [
+    "test/",
+    "lib/travenger/application.ex",
+    "lib/travenger/repo.ex",
+    "lib/travenger_web.ex",
+    "lib/travenger_web/endpoint.ex",
+    "lib/travenger_web/schema.ex",
+    "lib/travenger_web/gettext.ex",
+    "lib/travenger_web/plugs",
+    "lib/travenger_web/channels",
+    "lib/travenger_web/templates",
+    "lib/travenger_web/views/error_helpers.ex"
+  ]
+}

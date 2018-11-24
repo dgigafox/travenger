@@ -1,12 +1,6 @@
 defmodule TravengerWeb.Api.V1.MembershipStatusView do
   use TravengerWeb, :view
 
-  alias __MODULE__
-
-  def render("show.json", %{membership_status: membership_status}) do
-    %{data: render_one(membership_status, MembershipStatusView, "membership_status.json")}
-  end
-
   def render("membership_status.json", %{membership_status: membership_status}) do
     %{
       id: membership_status.id,
