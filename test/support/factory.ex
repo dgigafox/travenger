@@ -24,6 +24,11 @@ defmodule Travenger.Factory do
     NotificationObject
   }
 
+  alias Travenger.Posts.{
+    Blog,
+    Event
+  }
+
   def user_factory do
     email = sequence(:email, &"email-#{&1}@example.com")
 
@@ -111,6 +116,20 @@ defmodule Travenger.Factory do
     %GroupRating{
       author: build(:user),
       group: build(:group)
+    }
+  end
+
+  def event_factory do
+    %Event{
+      title: "Sample Event",
+      user: build(:user)
+    }
+  end
+
+  def blog_factory do
+    %Blog{
+      title: "Sample Blog",
+      user: build(:user)
     }
   end
 end

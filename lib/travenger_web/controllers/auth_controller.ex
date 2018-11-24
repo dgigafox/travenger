@@ -25,7 +25,6 @@ defmodule TravengerWeb.AuthController do
       |> Map.put(:name, auth.info.name)
       |> Map.put(:first_name, auth.info.first_name)
       |> Map.put(:last_name, auth.info.last_name)
-      |> add_gender(auth.info)
 
     authenticate_or_register(conn, params)
   end
@@ -36,13 +35,6 @@ defmodule TravengerWeb.AuthController do
       conn
       |> put_view(UserView)
       |> render("token.json", token: token)
-    end
-  end
-
-  defp add_gender(params, info) do
-    case info do
-      %{gender: gender} -> Map.put(params, :gender, gender)
-      _ -> params
     end
   end
 end
