@@ -38,6 +38,10 @@ defmodule Travenger.Accounts.Invitation do
     |> put_change(:status, :accepted)
   end
 
+  def cancel_changeset(invitation, attrs \\ %{}) do
+    change(invitation, %{status: :cancelled})
+  end
+
   defp validate_assoc(ch) do
     case get_field(ch, :type) do
       nil -> ch

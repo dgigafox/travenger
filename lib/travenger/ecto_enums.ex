@@ -29,7 +29,8 @@ defenum(
   InvitationStatusEnum,
   pending: 0,
   declined: 1,
-  accepted: 2
+  accepted: 2,
+  cancelled: 3
 )
 
 defenum(
