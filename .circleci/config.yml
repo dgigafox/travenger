@@ -1,0 +1,41 @@
+# Elixir CircleCI 2.0 configuration file
+#
+# Check https://circleci.com/docs/2.0/language-elixir/ for more details
+version: 2
+jobs:
+  build:
+    docker:
+      # specify the version here
+      - image: circleci/elixir:1.6.5
+        environment:
+          MIX_ENV: test
+      - image: postgres:9.6
+        environment:
+          POSTGRES_DB: noahpay_test
+
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - restore_cache:
+          key: v0.2.0-dependencies-{{ checksum "mix.lock" }}
+      - run:
+          name: Install hex
+          command: mix local.hex --force
+      - run:
+          name: Install rebar
+          command: mix local.rebar --force
+      - run:
+          name: Install dependencies
+          command: mix deps.get
+      - run:
+          name: Run Linter
+          command: mix credo --strict
+      - run:
+          name: Run Coveralls
+          command: mix coveralls.circle
+      - save_cache:
+          key: v0.2.0-dependencies-{{ checksum "mix.lock" }}
+          paths:
+            - /root/.mix
+            - deps
+            - _build/test/lib
